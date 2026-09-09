@@ -3,31 +3,36 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#081014" />
-  <title>Doskvol Dashboard</title>
+  <meta name="theme-color" content="#07090c" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Doskvol Dashboard · The Sneaks</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div class="fog fog-a" aria-hidden="true"></div><div class="fog fog-b" aria-hidden="true"></div>
   <header class="masthead">
-    <div><h1>DOSKVOL DASHBOARD</h1><p>Schemes. Crews. Consequences.</p></div>
-    <div class="cityline" aria-hidden="true">♜ · ♜ · ♜ · ♜ · ♜</div>
+    <div class="brandmark" aria-hidden="true">☾</div>
+    <div class="mastcopy"><p class="eyebrow">THE SNEAKS · PRIVATE GM LEDGER</p><h1>DOSKVOL DASHBOARD</h1><p class="motto">Schemes · Shadows · Consequences</p></div>
+    <div class="skyline" aria-hidden="true"><span>♜</span><span>†</span><span>♜</span><span>♱</span><span>♜</span></div>
   </header>
 
   <div class="app-shell">
     <nav id="nav" class="sidebar" aria-label="Dashboard sections"></nav>
     <main id="main" class="main"></main>
     <aside class="quickrail">
-      <section class="panel dice-panel">
-        <h2>⚄ D6 Roller</h2><p class="kicker">Roll the fate.</p>
-        <div id="die" class="die">—</div>
-        <button id="rollDie" class="primary">Roll d6</button>
-        <div id="rollHistory" class="history"></div>
+      <section class="panel oracle-mini">
+        <div class="panel-sigil">◈</div><h2>Action Oracle</h2><p class="kicker">Fastest route to the fiction.</p>
+        <button class="primary" data-jump="oracle">Resolve an action</button>
+        <div id="lastOracle" class="mini-result">No action resolved yet.</div>
       </section>
-      <section class="panel"><h2>! Complication</h2><p id="complication">Success always leaves a mark.</p><button id="rollComplication">Draw complication</button></section>
-      <section class="panel"><h2><span class="devil">☠</span> Devil's Bargain</h2><p id="bargain">More power. A higher price.</p><button id="rollBargain">Offer bargain</button></section>
+      <section class="panel"><div class="panel-sigil">!</div><h2>Complication</h2><p id="complication">Success always leaves a mark.</p><button id="rollComplication">Draw consequence</button></section>
+      <section class="panel blood-panel"><div class="panel-sigil">☠</div><h2>Devil's Bargain</h2><p id="bargain">More power. A higher price.</p><button id="rollBargain">Offer bargain</button></section>
+      <section class="panel"><div class="panel-sigil">⚄</div><h2>Fortune</h2><div id="die" class="die">—</div><button id="rollDie">Roll d6</button><div id="rollHistory" class="history"></div></section>
     </aside>
   </div>
 
+  <footer><span>Unofficial personal campaign tool.</span><a href="https://bladesinthedark.com/downloads" target="_blank" rel="noopener">Official Player Kit & map ↗</a></footer>
   <script src="app.js"></script>
 </body>
 </html>
