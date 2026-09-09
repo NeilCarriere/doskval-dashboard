@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#081014" />
+  <title>Doskvol Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="masthead">
+    <div><h1>DOSKVOL DASHBOARD</h1><p>Schemes. Crews. Consequences.</p></div>
+    <div class="cityline" aria-hidden="true">♜ · ♜ · ♜ · ♜ · ♜</div>
+  </header>
+
+  <div class="app-shell">
+    <nav id="nav" class="sidebar" aria-label="Dashboard sections"></nav>
+    <main id="main" class="main"></main>
+    <aside class="quickrail">
+      <section class="panel dice-panel">
+        <h2>⚄ D6 Roller</h2><p class="kicker">Roll the fate.</p>
+        <div id="die" class="die">—</div>
+        <button id="rollDie" class="primary">Roll d6</button>
+        <div id="rollHistory" class="history"></div>
+      </section>
+      <section class="panel"><h2>! Complication</h2><p id="complication">Success always leaves a mark.</p><button id="rollComplication">Draw complication</button></section>
+      <section class="panel"><h2><span class="devil">☠</span> Devil's Bargain</h2><p id="bargain">More power. A higher price.</p><button id="rollBargain">Offer bargain</button></section>
+    </aside>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
