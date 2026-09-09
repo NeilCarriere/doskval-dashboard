@@ -1,1 +1,32 @@
-# Doskval-dashboard
+# Doskvol Dashboard
+
+A private GM companion for our **Blades in the Dark** campaign, built for fast use at the table on iPad and desktop.
+
+## First build
+
+- Factions: searchable/scrollable faction workspace, relationships, notes, clocks
+- Locations: Doskvol map workspace with campaign locations and future faction overlays
+- Clocks: 4/6/8 segment progress clocks
+- Complications: quick prompts for success-with-a-complication results
+- Devil's Bargains: quick bargain prompts with the devil-face visual language
+- D6 Roller: one or more six-sided dice, roll history, eventual on-screen rolling animation
+- Gather Information: contact network, information specialties, leads and possible scores
+- Crew: The Sneaks
+- NPCs/Contacts: campaign-specific relationship tracking
+- Session Notes: lightweight GM notes tied to factions, NPCs and locations
+
+## Established campaign data
+
+### Quellyn the Witch
+Young witch living in Six Towers. She is the crew's only established contact so far. Her cottage has a small stone-fenced garden, mostly fungi and shade-growing things with a little magical help, and drying herbs hang from the ceiling. The Sneaks have completed two ingredient-theft jobs for her admirably and generated no Heat. Relationship: Established / Trusted.
+
+### Faction relationships
+- Gray Cloaks — Friendly. Origin established during crew creation; exact reason currently TBD.
+- Wraiths — Working arrangement. Nightmarket is their hunting ground and The Sneaks have faithfully paid tribute.
+- Grinders — Hostile/angered. The Sneaks stole from them.
+
+## Visual direction
+
+Industrial-gothic Doskvol atmosphere without sacrificing usability: charcoal/blue-black surfaces, aged cream typography, restrained bronze and faction accents, readable high contrast, fog/lantern/crow motifs, and a living-city feel.
+
+The product name is **Doskvol Dashboard** regardless of the current repository spelling.
