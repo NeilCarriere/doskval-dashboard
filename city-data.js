@@ -18,6 +18,7 @@ window.DOSKVOL_DATA = {
     {name:'Covenant',tier:6,hold:'strong',category:'Institutions',source:'deep'},
     {name:'City Council',tier:5,hold:'strong',category:'Institutions',source:'core+deep'},
     {name:'Ministry of Preservation',tier:5,hold:'strong',category:'Institutions',source:'core+deep'},
+    {name:'Leviathan Hunters',tier:5,hold:'weak',category:'Institutions',source:'core+deep'},
     {name:'Unity Commission',tier:5,hold:'strong',category:'Institutions',source:'deep'},
     {name:'Ironhook Prison',tier:4,hold:'strong',category:'Institutions',source:'core+deep'},
     {name:'Rowan House',tier:4,hold:'strong',category:'Institutions',source:'deep'},
@@ -50,7 +51,8 @@ window.DOSKVOL_DATA = {
     {name:'Spirit Wardens',tier:4,hold:'strong',category:'Core Book — Other',source:'core'},
     {name:'Ulf Ironborn',tier:1,hold:'strong',category:'Core Book — Other',source:'core'},
     {name:'The Wraiths',tier:2,hold:'weak',category:'Core Book — Other',source:'core'},
-    {name:'The Gray Cloaks',tier:2,hold:'weak',category:'Core Book — Other',source:'core'}
+    {name:'The Gray Cloaks',tier:2,hold:'weak',category:'Core Book — Other',source:'core'},
+    {name:'The Lost',tier:1,hold:'weak',category:'Core Book — Other',source:'core'}
   ],
   crew: {
     name:'The Sneaks',icon:'hood',type:'Shadows',source:'campaign',
@@ -84,7 +86,7 @@ window.DOSKVOL_DATA = {
   districts:['Whitecrown','Brightstone','Charterhall','Six Towers','Silkshore','Nightmarket','Crow’s Foot','The Docks','Barrowcleft','Coalridge','Charhollow','Dunslough'],
   loreLayers:[
     {id:'core',title:'Core Canon',rule:'The main rulebook is the baseline for Doskvol, its districts, institutions, factions, and starting situation.'},
-    {id:'deep',title:'Deep Cuts',rule:'Expanded lore, 27 full faction treatments, setting innovations, and catalysts sit on top of the core setting. Alternate mechanics are not enabled by default.'},
+    {id:'deep',title:'Deep Cuts',rule:'Expanded faction lore, setting innovations, and catalysts sit on top of the core setting. Alternate mechanics are not enabled by default.'},
     {id:'campaign',title:'Campaign Canon',rule:'Anything established at your table overrides published assumptions for this campaign.'}
   ]
 };
