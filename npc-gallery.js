@@ -1,57 +1,85 @@
-// NPC/Faces visual gallery — portrait-forward layout inspired by the approved mockup.
+// NPC/Faces gallery — fully self-contained so it cannot fail if lore layers do.
 (function(){
   const E=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const PEOPLE=[
+    {name:'Quellyn',role:'Witch, healer & seer',group:'Sneaks contact · Six Towers',status:'Friend',kind:'contact',source:'Core + campaign',desc:'A young witch and competent healer wanted by the Spirit Wardens. In this campaign she lives in a cottage behind a low stone fence; her garden is mostly fungi sustained by a little real magic, and drying herbs hang from the ceiling.'},
+    {name:'Flint',role:'Spirit trafficker',group:'Whisper contact · Six Towers',status:'Rival',kind:'contact',source:'Core + campaign',desc:'A weird, calculating and suspicious spirit trafficker who works from a condemned manor. A source of occult supplies and a dangerous rival in the spirit trade.'},
+    {name:'Stazia',role:'Apothecary',group:'Leech contact',status:'Friend',kind:'contact',source:'Core + campaign',desc:'An apothecary with underworld connections and access to unusual alchemical supplies.'},
+    {name:'Malista',role:'Priestess',group:'Leech contact',status:'Rival',kind:'contact',source:'Core + campaign',desc:'A priestess devoted to a forgotten god; campaign evidence places her in suspicious meetings with an unknown figure.'},
+    {name:'Telda',role:'Beggar & street informant',group:'Lurk contact',status:'Friend',kind:'contact',source:'Core + campaign',desc:'A beggar who may have taught a Lurk the stealthy arts. She moves through a street-level information network and hears what respectable people miss.'},
+    {name:'Frake',role:'Locksmith',group:'Lurk contact',status:'Rival',kind:'contact',source:'Core + campaign',desc:'An expert locksmith — either the person to consult about impossible security or the master who builds locks specifically to defeat thieves.'},
+    {name:'Fitz',role:'Collector',group:'Shadows crew contact',status:'Contact',kind:'contact',source:'Core + campaign',desc:'A collector and aficionado of strange artifacts; a natural source of unusual targets and occult curios.'},
+    {name:'Dowler',role:'Explorer',group:'Shadows crew contact',status:'Available',kind:'contact',source:'Core',desc:'An explorer with experience of places sensible citizens avoid, possibly including the deathlands.'},
+    {name:'Laroze',role:'Bluecoat',group:'Shadows crew contact',status:'Available',kind:'contact',source:'Core',desc:'A Bluecoat who can plausibly serve as an informant inside the City Watch.'},
+    {name:'Amancio',role:'Deal broker',group:'Shadows crew contact',status:'Available',kind:'contact',source:'Core',desc:'A well-connected underworld deal broker known for neutrality and useful introductions.'},
+    {name:'Adelaide Phroaig',role:'Noble',group:'Shadows crew contact',status:'Available',kind:'contact',source:'Core',desc:'A noble connection who can open doors to elite targets, parties, estates and high-society scores.'},
+    {name:'Rigney',role:'Tavern owner',group:'Shadows crew contact',status:'Available',kind:'contact',source:'Core',desc:'A tavern owner and reliable source of gossip, rumors and potential opportunities.'},
+    {name:'Lyssa',role:'Boss',group:'The Crows',status:'Faction',kind:'leader',source:'Core',desc:'Current boss of the Crows after Roric’s death. Her authority is recent and the struggle over Crow’s Foot makes every alliance matter.'},
+    {name:'Roric',role:'Former boss · deceased',group:'The Crows',status:'Faction',kind:'faction',source:'Core',desc:'Former boss of the Crows. Dead, but the mystery surrounding his death and ghost still destabilizes Crow’s Foot.'},
+    {name:'Bell',role:'Enforcer',group:'The Crows',status:'Faction',kind:'faction',source:'Core',desc:'A Crow enforcer and useful street-level face for the gang’s interests.'},
+    {name:'Bazso Baz',role:'Boss',group:'The Lampblacks',status:'Faction',kind:'leader',source:'Core',desc:'Veteran gang boss at the centre of the war in Crow’s Foot; practical, dangerous, and always looking for leverage against the Red Sashes.'},
+    {name:'Pickett',role:'Gang member',group:'The Lampblacks',status:'Faction',kind:'faction',source:'Core',desc:'A useful Lampblack face for bringing the gang’s demands and street business directly to the crew.'},
+    {name:'Henner',role:'Gang member',group:'The Lampblacks',status:'Faction',kind:'faction',source:'Core',desc:'A Lampblack operative who can carry orders, threats, rumors and opportunities from Bazso’s organization.'},
+    {name:'Mylera Klev',role:'Leader',group:'The Red Sashes',status:'Faction',kind:'leader',source:'Core',desc:'Leader of the Red Sashes: educated, ruthless, shrewd, and deeply connected to the Iruvian sword-school tradition.'},
+    {name:'Slate',role:'Leader',group:'The Wraiths',status:'Faction',kind:'leader',source:'Core',desc:'Sophisticated, daring and secretive leader of the Wraiths, the masked thieves and spies whose hunting grounds include Nightmarket.'},
+    {name:'Loop',role:'Appraisal expert',group:'The Wraiths',status:'Faction',kind:'faction',source:'Core',desc:'Obsessive, moody and secretive expert who evaluates the Wraiths’ valuable and unusual scores.'},
+    {name:'Nessa',role:'Leader',group:'Gray Cloaks',status:'Friendly faction',kind:'leader',source:'Core + campaign',desc:'Scrupulous and daring leader of the former Bluecoats turned criminals. The Gray Cloaks currently favor the Sneaks.'},
+    {name:'Hutch',role:'Second',group:'Gray Cloaks',status:'Friendly faction',kind:'faction',source:'Core',desc:'Brash and fierce second-in-command of the Gray Cloaks.'},
+    {name:'Hutton',role:'Leader',group:'The Grinders',status:'Hostile faction',kind:'leader',source:'Core + campaign',desc:'Confident and volatile leader of the Grinders. His people are angry with the Sneaks after the crew stole from them.'},
+    {name:'Sercy',role:'Second',group:'The Grinders',status:'Hostile faction',kind:'faction',source:'Core',desc:'Defiant second-in-command of the Grinders, a hardened revolutionary operator.'},
+    {name:'Derret',role:'Heavy',group:'The Grinders',status:'Hostile faction',kind:'faction',source:'Core',desc:'The Grinders’ toughest gang member: huge, shrewd and dangerous.'},
+    {name:'Roslyn',role:'Outside contact',group:'The Dimmer Sisters',status:'Faction',kind:'faction',source:'Core',desc:'Patient, loyal and arcane servant who handles contact with outsiders for the mysterious Dimmer Sisters.'},
+    {name:'Irelen',role:'Spark-craft tinkerer',group:'The Dimmer Sisters',status:'Faction',kind:'faction',source:'Core',desc:'Loyal, enigmatic and obsessive tinkerer serving the Dimmer Sisters.'},
+    {name:'Eisele',role:'Leader',group:'Gondoliers',status:'Faction',kind:'leader',source:'Core',desc:'Serene, knowledgeable and fearless leader of the Gondoliers, trusted with the city’s strangest supernatural problems.'},
+    {name:'Griggs',role:'Chief Whisper',group:'Gondoliers',status:'Faction',kind:'faction',source:'Core',desc:'Strange, ruthless and haunted chief Whisper of the Gondoliers.'},
+    {name:'Margette Vale',role:'Leader',group:'The Fog Hounds',status:'Faction',kind:'leader',source:'Core',desc:'Quiet, cold and fearless leader of the Fog Hounds, hardened by years on the Void Sea.'},
+    {name:'Bear',role:'Second',group:'The Fog Hounds',status:'Faction',kind:'faction',source:'Core',desc:'Fierce, moody and brash second of the Fog Hounds.'},
+    {name:'Goldie',role:'Navigator',group:'The Fog Hounds',status:'Faction',kind:'faction',source:'Core',desc:'Calculating, patient and confident navigator for the Fog Hounds.'},
+    {name:'Lord Scurlock',role:'Ancient noble',group:'Lord Scurlock',status:'Faction',kind:'leader',source:'Core',desc:'An ancient noble obsessed with arcane secrets, possibly a vampire, and powerful enough to count as a faction by himself.'},
+    {name:'Setarra',role:'Demon',group:'Scurlock / occult network',status:'Faction',kind:'faction',source:'Core',desc:'A demon bound to Scurlock in an ancient relationship of shifting obligation, danger and power.'},
+    {name:'Seresh',role:'Leader',group:'The Silver Nails',status:'Faction',kind:'leader',source:'Core',desc:'Bold, brash and defiant leader of the Severosi mercenaries and ghost killers.'},
+    {name:'Tuhan',role:'Lead scout',group:'The Silver Nails',status:'Faction',kind:'faction',source:'Core',desc:'Bold, cunning and charming lead scout of the Silver Nails.'},
+    {name:'Ulf Ironborn',role:'Leader',group:'Ulf Ironborn',status:'Faction',kind:'leader',source:'Core',desc:'Ruthless, savage and bold Skovlander newcomer carving out territory in Doskvol.'},
+    {name:'Havid',role:'Second',group:'Ulf Ironborn',status:'Faction',kind:'faction',source:'Core',desc:'Ruthless, volatile and shrewd second-in-command to Ulf Ironborn.'},
+    {name:'Commander Clelland',role:'Chief commissioner',group:'Bluecoats',status:'Faction',kind:'leader',source:'Core',desc:'Corrupt, cruel and arrogant chief commissioner of the City Watch.'},
+    {name:'Captain Michter',role:'Chief instructor',group:'Bluecoats',status:'Faction',kind:'faction',source:'Core',desc:'Ambitious, fierce and confident Bluecoat captain responsible for instruction.'},
+    {name:'Captain Vale',role:'Quartermaster',group:'Bluecoats',status:'Faction',kind:'faction',source:'Core',desc:'Loyal, insightful and quiet Bluecoat quartermaster.'},
+    {name:'Bakoros',role:'Warden code-name',group:'Spirit Wardens',status:'Faction',kind:'faction',source:'Core',desc:'A Spirit Warden code-name that may refer to several individuals; sometimes associated with lectures at Doskvol Academy.'},
+    {name:'Elder Rowan',role:'Leader',group:'Church of Ecstasy',status:'Faction',kind:'leader',source:'Core',desc:'Devout, resolute and visionary leader within the Church of Ecstasy.'},
+    {name:'Preceptor Dunvil',role:'Arcane researcher',group:'Church of Ecstasy',status:'Faction',kind:'faction',source:'Core',desc:'Unorthodox, obsessive and enigmatic researcher pursuing the Church’s occult goals.'},
+    {name:'Una Farros',role:'Instructor & inventor',group:'Sparkwrights',status:'Faction',kind:'faction',source:'Core',desc:'Curious, vain and famous Charterhall University instructor connected to spark-craft research.'},
+    {name:'The Tower',role:'Secret leader',group:'The Unseen',status:'Faction',kind:'leader',source:'Core',desc:'The hidden leader of the Unseen, protected by the organization’s extraordinary secrecy.'},
+    {name:'The Star',role:'Captain',group:'The Unseen',status:'Faction',kind:'faction',source:'Core',desc:'A captain of the Unseen and one of the few usable faces for an organization designed to remain unknowable.'},
+    {name:'Grull',role:'Undercover thug',group:'The Unseen',status:'Faction',kind:'faction',source:'Core',desc:'Ambitious mid-level Unseen operative working undercover as a coach driver.'}
+  ];
   const hash=s=>[...String(s)].reduce((a,c)=>((a<<5)-a+c.charCodeAt(0))|0,17)>>>0;
   function portrait(name,big=false){
-    const h=hash(name), hue=h%80+160, face=['#bca18d','#c9ad98','#9d8271','#d0b59e','#8c766c'][h%5];
-    const hair=['#0a1014','#17151a','#241b18','#151d20','#2b2928'][(h>>3)%5];
-    const coat=['#0c1c22','#151722','#172027','#1a1519','#101b19'][(h>>7)%5];
-    const style=(h>>11)%5;
-    let hairPath='';
-    if(style===0)hairPath='<path d="M18 43Q23 8 51 7q30 2 34 39-11-13-22-16l-6 28-9-31-11 29-4-27q-8 4-15 14z" fill="'+hair+'"/>';
-    if(style===1)hairPath='<path d="M20 38Q27 9 52 9q25 0 31 31-11-12-31-10T20 38z" fill="'+hair+'"/><path d="M26 35q-8 28 3 48M75 35q8 28-2 48" stroke="'+hair+'" stroke-width="9"/>';
-    if(style===2)hairPath='<path d="M23 31Q34 12 50 12q20 0 29 21-14-8-29-5t-27 3z" fill="'+hair+'"/><path d="M29 57q21 23 43 0-5 26-22 28-17-2-21-28z" fill="'+hair+'"/>';
-    if(style===3)hairPath='<path d="M18 40Q25 6 51 8q28 1 34 36-8-8-16-11l-5 19-8-27-9 24-8-18-5 21-5-18q-6 2-11 6z" fill="'+hair+'"/>';
-    if(style===4)hairPath='<path d="M25 28Q36 11 50 11q17 0 27 18-12-5-27-4t-25 3z" fill="'+hair+'"/><path d="M22 63q28 17 56 0-4 20-28 23-24-3-28-23z" fill="'+hair+'" opacity=".92"/>';
-    const scar=(h%4===0)?'<path d="M62 35l-7 25" stroke="#6a3837" stroke-width="1.6" opacity=".75"/>':'';
-    const eye=(h%7===0)?'#79eee1':'#1d2527';
-    const adorn=(h%6===0)?'<circle cx="75" cy="28" r="3" fill="#77e6d5" opacity=".8"/>':'';
-    return `<svg class="npcPortraitArt ${big?'portraitBig':''}" viewBox="0 0 100 120" role="img" aria-label="Campaign visualization portrait of ${E(name)}"><defs><linearGradient id="bg${h}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="hsl(${hue},28%,18%)"/><stop offset="1" stop-color="#05090c"/></linearGradient><radialGradient id="mist${h}"><stop stop-color="#74ddcf" stop-opacity=".16"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs><rect width="100" height="120" fill="url(#bg${h})"/><circle cx="50" cy="48" r="36" fill="url(#mist${h})"/><path d="M9 120q5-38 41-43 37 5 42 43z" fill="${coat}"/><ellipse cx="50" cy="46" rx="22" ry="27" fill="${face}"/>${hairPath}<path d="M36 45l9-2m10 0 9 2" stroke="#3b3130" stroke-width="2" stroke-linecap="round"/><circle cx="42" cy="46" r="2" fill="${eye}"/><circle cx="59" cy="46" r="2" fill="${eye}"/><path d="M49 48l-2 10 5 1" stroke="#6e584f" fill="none"/><path d="M42 65q8 4 16 0" stroke="#70464a" stroke-width="1.5" fill="none"/>${scar}${adorn}<path d="M16 104q17-13 34-9 18-4 35 9" stroke="#5ecfbe" stroke-opacity=".22" fill="none"/><rect x="2" y="2" width="96" height="116" fill="none" stroke="#7fe3d3" stroke-opacity=".28"/></svg>`;
+    const h=hash(name), hue=165+(h%40), face=['#c7ac98','#b8947e','#d0b69f','#96796d','#bca18d'][h%5], hair=['#090d11','#171319','#2b211b','#121b1e','#302928'][(h>>3)%5], coat=['#0a1b20','#151824','#17242a','#1d151c','#10211e'][(h>>7)%5],style=(h>>11)%5;
+    const eyes=(h%9===0)?'#77f2df':'#20292c';
+    const hairArt=[`<path d="M16 44Q22 7 50 7q30 1 35 39-10-12-21-16l-6 30-10-34-11 31-5-28q-9 5-16 15z" fill="${hair}"/>`,`<path d="M18 38Q27 8 51 8q27 0 32 33-11-13-32-10T18 38z" fill="${hair}"/><path d="M25 35q-8 30 4 52M76 35q8 30-3 52" stroke="${hair}" stroke-width="10"/>`,`<path d="M22 31Q33 10 50 10q21 0 30 23-15-9-30-5t-28 3z" fill="${hair}"/><path d="M27 59q23 26 46 0-5 28-23 30-18-2-23-30z" fill="${hair}"/>`,`<path d="M16 41Q24 5 51 7q29 1 35 37-9-9-17-12l-5 21-9-30-9 27-8-21-6 23-5-19q-6 3-11 8z" fill="${hair}"/>`,`<path d="M24 28Q35 9 50 9q18 0 28 20-13-6-28-5t-26 4z" fill="${hair}"/><path d="M20 64q30 18 60 0-5 22-30 25-25-3-30-25z" fill="${hair}"/>`][style];
+    const scar=(h%4===0)?'<path d="M63 36l-7 28" stroke="#6d3538" stroke-width="1.5"/>':'';
+    return `<svg class="npcPortraitArt ${big?'portraitBig':''}" viewBox="0 0 100 120" role="img" aria-label="Portrait of ${E(name)}"><defs><linearGradient id="b${h}" x2="1" y2="1"><stop stop-color="hsl(${hue},30%,18%)"/><stop offset="1" stop-color="#05090c"/></linearGradient><radialGradient id="m${h}"><stop stop-color="#76e7d6" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs><rect width="100" height="120" fill="url(#b${h})"/><circle cx="50" cy="48" r="38" fill="url(#m${h})"/><path d="M7 120q7-40 43-44 37 4 43 44z" fill="${coat}"/><ellipse cx="50" cy="47" rx="22" ry="28" fill="${face}"/>${hairArt}<path d="M35 45l10-2m10 0 10 2" stroke="#3a302f" stroke-width="2" stroke-linecap="round"/><circle cx="42" cy="47" r="2" fill="${eyes}"/><circle cx="59" cy="47" r="2" fill="${eyes}"/><path d="M49 49l-2 10 5 1" stroke="#6d564f" fill="none"/><path d="M41 66q9 4 18 0" stroke="#71474a" stroke-width="1.5" fill="none"/>${scar}<path d="M15 104q18-14 35-9 18-5 36 9" stroke="#63daca" stroke-opacity=".26" fill="none"/><rect x="2" y="2" width="96" height="116" fill="none" stroke="#8af0df" stroke-opacity=".28"/></svg>`;
   }
-  function buildPeople(){
-    const L=window.DOSKVAL_LORE||{contacts:[],lore:{}};
-    const by=new Map();
-    (L.contacts||[]).forEach(c=>by.set(c.name,{name:c.name,role:c.role||'Contact',group:c.group||'Crew Contact',desc:c.sentence||'',status:c.status||'Contact',source:c.group?.includes('Campaign')?'Campaign':'Core contact',kind:'contact'}));
-    Object.entries(L.lore||{}).forEach(([f,d])=>(d.npcs||[]).forEach(n=>{
-      const existing=by.get(n[0]);
-      const p={name:n[0],role:(n[1].split(';')[0]||'Faction figure').replace(/\.$/,''),group:f,desc:n[1],status:'Faction',source:'Published canon',kind:'faction'};
-      if(existing) by.set(n[0],{...p,...existing,group:existing.group+' · '+f,desc:existing.desc+' '+p.desc}); else by.set(n[0],p);
-    }));
-    return [...by.values()];
-  }
-  function tags(p){
-    const t=[]; if(p.kind==='contact')t.push('Crew Contact'); if(/witch|seer|arcane|spirit|demon|occult/i.test(p.role+' '+p.desc))t.push('Occult'); if(/leader|boss|captain|chief|second/i.test(p.role+' '+p.desc))t.push('Faction Leader'); if(/Bluecoat|Watch/i.test(p.group+' '+p.role))t.push('Law'); if(/Six Towers/i.test(p.desc+' '+p.group))t.push('Six Towers'); if(p.status==='Friend')t.push('Friendly'); if(p.status==='Rival')t.push('Rival'); return t.slice(0,5);
-  }
+  const tags=p=>[p.kind==='contact'?'Crew Contact':'Faction Figure',p.kind==='leader'?'Faction Leader':'',/witch|seer|arcane|spirit|demon|occult/i.test(p.role+' '+p.desc)?'Occult':'',p.status].filter(Boolean).slice(0,5);
   let selected='Quellyn', filter='all', query='';
-  function card(p){return `<button class="npcTile ${p.name===selected?'selected':''}" data-npc="${E(p.name)}"><div class="npcTilePortrait">${portrait(p.name)}</div><div class="npcTileText"><b>${E(p.name)}</b><small>${E(p.group)}</small></div></button>`}
-  function detail(p){const tg=tags(p);return `<aside class="npcDetail panel"><header><span>☻</span><div><h2>${E(p.name)}</h2><small>${E(p.role)} · ${E(p.group)}</small></div></header><div class="npcHeroPortrait">${portrait(p.name,true)}<span class="vizLabel">CAMPAIGN VISUALIZATION</span></div><div class="npcFacts"><div><label>ROLE</label><b>${E(p.role)}</b></div><div><label>CONNECTION</label><b>${E(p.status)}</b></div><div><label>SOURCE</label><b>${E(p.source)}</b></div></div><div class="npcTags">${tg.map(x=>`<span>${E(x)}</span>`).join('')}</div><section><h3>DESCRIPTION</h3><p>${E(p.desc||'No further description established yet.')}</p></section><section><h3>USE AT THE TABLE</h3><p>${p.kind==='contact'?'This person can provide information, access, leverage, complications, or a personal stake for the crew.':'Use this face to personify the faction’s interests, demands, opportunities and retaliation.'}</p></section><div class="npcDetailBtns"><button data-page="notes">VIEW NOTES</button><button data-page="factions">FACTION LEDGER</button></div></aside>`}
+  function card(p){return `<button class="npcTile ${p.name===selected?'selected':''}" data-npc="${E(p.name)}"><div class="npcTilePortrait">${portrait(p.name)}</div><div class="npcTileText"><b>${E(p.name)}</b><small>${E(p.role)} · ${E(p.group)}</small></div></button>`}
+  function detail(p){return `<aside class="npcDetail panel"><header><span>☻</span><div><h2>${E(p.name)}</h2><small>${E(p.role)} · ${E(p.group)}</small></div></header><div class="npcHeroPortrait">${portrait(p.name,true)}<span class="vizLabel">CAMPAIGN VISUALIZATION</span></div><div class="npcFacts"><div><label>ROLE</label><b>${E(p.role)}</b></div><div><label>CONNECTION</label><b>${E(p.status)}</b></div><div><label>SOURCE</label><b>${E(p.source)}</b></div><div><label>FACTION / NETWORK</label><b>${E(p.group)}</b></div></div><div class="npcTags">${tags(p).map(x=>`<span>${E(x)}</span>`).join('')}</div><section><h3>DESCRIPTION</h3><p>${E(p.desc)}</p></section><section><h3>USE AT THE TABLE</h3><p>${p.kind==='contact'?'A personal connection for information, access, favors, complications and consequences.':'Use this face to make the faction personal: offers, pressure, retaliation, rumors and negotiations should come through people.'}</p></section><div class="npcDetailBtns"><button data-page="notes">VIEW NOTES</button><button data-page="factions">FACTION LEDGER</button></div></aside>`}
   function renderFaces(){
-    const people=buildPeople();
-    if(!people.find(p=>p.name===selected))selected=people[0]?.name||'';
-    let shown=people.filter(p=>filter==='all'||(filter==='contacts'&&p.kind==='contact')||(filter==='leaders'&&tags(p).includes('Faction Leader'))||(filter==='factions'&&p.kind==='faction'));
+    let shown=PEOPLE.filter(p=>filter==='all'||(filter==='contacts'&&p.kind==='contact')||(filter==='leaders'&&p.kind==='leader')||(filter==='factions'&&p.kind!=='contact'));
     if(query)shown=shown.filter(p=>(p.name+' '+p.role+' '+p.group+' '+p.desc).toLowerCase().includes(query.toLowerCase()));
-    const sel=people.find(p=>p.name===selected)||shown[0]||people[0];
-    const main=document.getElementById('main'); if(!main)return;
-    main.innerHTML=`<div class="npcPageHead"><div><p>PEOPLE WHO MATTER IN DOSKVOL</p><h1>NPCs / Faces</h1></div><div class="npcSearch"><span>⌕</span><input id="npcSearch" placeholder="Search people, factions, roles…" value="${E(query)}"></div></div><div class="npcToolbar"><button class="${filter==='all'?'active':''}" data-npcfilter="all">All NPCs <span>${people.length}</span></button><button class="${filter==='contacts'?'active':''}" data-npcfilter="contacts">Crew Contacts</button><button class="${filter==='leaders'?'active':''}" data-npcfilter="leaders">Faction Leaders</button><button class="${filter==='factions'?'active':''}" data-npcfilter="factions">Faction Figures</button></div><div class="npcWorkspace"><section class="npcGallery panel"><header><span>◉</span><h2>${filter==='all'?'THE HUMAN WEB':filter.toUpperCase()}</h2><small>${shown.length} shown</small></header><div class="npcTiles">${shown.map(card).join('')||'<p class="npcEmpty">No matching faces.</p>'}</div></section>${sel?detail(sel):''}</div>`;
-    bindFaces();
-  }
-  function bindFaces(){
+    if(!PEOPLE.some(p=>p.name===selected))selected='Quellyn';
+    const sel=PEOPLE.find(p=>p.name===selected)||shown[0]||PEOPLE[0], main=document.getElementById('main'); if(!main)return;
+    main.innerHTML=`<div class="npcPageHead"><div><p>PEOPLE WHO MATTER IN DOSKVOL</p><h1>NPCs / Faces</h1></div><div class="npcSearch"><span>⌕</span><input id="npcSearch" placeholder="Search people, factions, roles…" value="${E(query)}"></div></div><div class="npcToolbar"><button class="${filter==='all'?'active':''}" data-npcfilter="all">All NPCs <span>${PEOPLE.length}</span></button><button class="${filter==='contacts'?'active':''}" data-npcfilter="contacts">Crew Contacts</button><button class="${filter==='leaders'?'active':''}" data-npcfilter="leaders">Faction Leaders</button><button class="${filter==='factions'?'active':''}" data-npcfilter="factions">Faction Figures</button></div><div class="npcWorkspace"><section class="npcGallery panel"><header><span>◉</span><h2>THE HUMAN WEB</h2><small>${shown.length} shown</small></header><div class="npcTiles">${shown.map(card).join('')}</div></section>${detail(sel)}</div>`;
     document.querySelectorAll('[data-npc]').forEach(b=>b.onclick=()=>{selected=b.dataset.npc;renderFaces()});
     document.querySelectorAll('[data-npcfilter]').forEach(b=>b.onclick=()=>{filter=b.dataset.npcfilter;renderFaces()});
     const q=document.getElementById('npcSearch'); if(q)q.oninput=()=>{query=q.value;renderFaces();const nq=document.getElementById('npcSearch');if(nq){nq.focus();nq.setSelectionRange(query.length,query.length)}};
-    document.querySelectorAll('.npcDetail [data-page]').forEach(b=>b.onclick=()=>setPage(b.dataset.page));
+    document.querySelectorAll('.npcDetail [data-page]').forEach(b=>b.onclick=()=>{if(typeof setPage==='function')setPage(b.dataset.page)});
   }
-  const previous=window.render;
-  window.render=function(){previous(); if(state.page==='faces')renderFaces();};
-  if(state?.page==='faces')renderFaces();
+  function install(){
+    if(typeof window.render==='function'&&!window.__npcGalleryWrapped){const prev=window.render;window.render=function(){prev();try{if(typeof state!=='undefined'&&state.page==='faces')renderFaces()}catch(e){console.error('NPC render',e)}};window.__npcGalleryWrapped=true;}
+    try{if(typeof state!=='undefined'&&state.page==='faces')renderFaces()}catch(e){console.error('NPC initial render',e)}
+  }
+  window.DOSKVAL_NPCS=PEOPLE;
+  install();
+  setTimeout(install,250);
 })();
