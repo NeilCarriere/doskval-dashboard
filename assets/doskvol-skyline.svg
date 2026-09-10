@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 220" role="img" aria-label="Doskvol skyline">
+  <defs>
+    <linearGradient id="fog" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fefff" stop-opacity=".18"/><stop offset="1" stop-color="#071014" stop-opacity="0"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="1200" height="220" fill="none"/>
+  <circle cx="1010" cy="48" r="34" fill="#c9fbff" opacity=".7" filter="url(#glow)"/>
+  <g fill="#091117" stroke="#2fcce8" stroke-opacity=".34" stroke-width="2">
+    <path d="M0 190h70v-48h20v48h70v-95h25v-26h18v26h24v95h58v-64h28v-41h20v41h28v64h52v-116h34V49h26v25h30v116h65v-82h23V91h20v17h28v82h58v-56h24v-36h20v36h20v56h70v-132h31v-23h20v23h30v132h55v-72h20v-44h24v44h19v72h62v-95h24v-26h18v26h28v95h73V77h28v-29h20v29h28v113h80v30H0z"/>
+    <path d="M150 190c36-48 72-48 108 0M720 190c46-58 92-58 138 0" fill="none"/>
+  </g>
+  <g fill="#8cf4ff" opacity=".55">
+    <rect x="184" y="112" width="5" height="8"/><rect x="451" y="104" width="5" height="8"/><rect x="782" y="91" width="5" height="8"/><rect x="1038" y="121" width="5" height="8"/>
+  </g>
+  <path d="M0 180c190-38 320 20 515-6 213-28 384-25 685 9v37H0z" fill="url(#fog)"/>
+</svg>
