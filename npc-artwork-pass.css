@@ -1,0 +1,8 @@
+.realNpcSprite{width:100%;height:100%;display:block;background-repeat:no-repeat;background-color:#05090b;filter:saturate(.9) contrast(1.08) brightness(.94)}
+.npcTile.selected .realNpcSprite{filter:saturate(.98) contrast(1.09) brightness(1)}
+.realNpcHeroSprite{position:absolute;inset:0;width:100%;height:100%;background-repeat:no-repeat;filter:saturate(.93) contrast(1.08) brightness(.95)}
+.npcHeroPortrait{position:relative;height:340px;overflow:hidden;background:#05090b;border:1px solid rgba(111,236,220,.26)}
+.npcHeroPortrait:after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 55px rgba(0,0,0,.52),inset 0 -55px 55px rgba(0,0,0,.28)}
+.npcTilePortrait{background:#05090b}.npcTileText{background:linear-gradient(180deg,rgba(6,15,18,.94),rgba(4,10,12,.98))}.npcTileText b{font-size:16px}
+.npcDossier{margin:0 12px 4px}.dossierGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0 0 9px}.dossierGrid>div{padding:7px 8px;border:1px solid rgba(111,236,220,.18);background:rgba(5,15,18,.76)}.dossierGrid .wide{grid-column:1/-1}.dossierGrid label{display:block;font-size:9px;letter-spacing:.14em;color:#73dccc;margin-bottom:2px}.dossierGrid b{font:12px Georgia,serif;color:#e2ddd0}.npcDossier section{margin:0!important;padding:10px 0!important;border-top:1px solid rgba(111,236,220,.14)}.npcDossier h3{margin:0 0 5px!important;color:#76dfd0!important;font-size:11px!important;letter-spacing:.14em}.npcDossier p{margin:0;color:#cbc5ba;line-height:1.45}.npcWorkspace{grid-template-columns:minmax(0,1.55fr) minmax(360px,.95fr)}
+@media(max-width:900px){.npcWorkspace{grid-template-columns:1fr}.npcHeroPortrait{height:300px}}
