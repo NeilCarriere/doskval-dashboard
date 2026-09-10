@@ -33,5 +33,10 @@
   <script src="city-data.js"></script>
   <script src="app.js"></script>
   <script src="faction-web.js"></script>
+  <script>
+    // Start only after the extension layer has replaced the base renderer.
+    // Without this call, the static frame appears but the nav and main panels remain blank.
+    if (typeof render === 'function') render();
+  </script>
 </body>
 </html>
