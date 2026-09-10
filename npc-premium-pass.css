@@ -1,0 +1,42 @@
+/* Premium NPC visual pass — match the approved Doskval mockup */
+:root{--premium-teal:#74e5d4;--premium-ink:#04090b;--premium-panel:#071216;--premium-bronze:#6f5135}
+body{background:
+  radial-gradient(circle at 55% 0%,rgba(51,106,102,.09),transparent 34%),
+  linear-gradient(180deg,#050b0e,#030709 78%);}
+
+.masthead{border-top:3px solid rgba(111,81,53,.75);border-bottom:2px solid rgba(111,81,53,.72);
+  box-shadow:0 2px 0 #091416,0 9px 28px rgba(0,0,0,.5)}
+.app-shell{border-left:3px solid rgba(111,81,53,.55);border-right:3px solid rgba(111,81,53,.55)}
+.sidebar{box-shadow:inset -1px 0 rgba(116,229,212,.12),inset -9px 0 22px rgba(0,0,0,.25)}
+.npcPageHead h1{font-size:34px;letter-spacing:.015em;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.npcPageHead p,.npcGallery>header h2{letter-spacing:.18em}
+.npcToolbar{gap:7px}
+.npcToolbar button{font-family:Georgia,serif;font-size:13px;background:linear-gradient(180deg,#0b191c,#071114);
+  border-color:rgba(116,229,212,.32);box-shadow:inset 0 0 0 1px rgba(0,0,0,.5)}
+.npcToolbar button.active{border-color:var(--premium-teal);color:#f2ecdf;box-shadow:0 0 13px rgba(84,225,207,.16),inset 0 0 12px rgba(65,187,173,.08)}
+.npcWorkspace.premiumWorkspace{grid-template-columns:minmax(0,1.62fr) minmax(390px,.88fr);gap:14px}
+.npcTiles{grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;padding:10px}
+.npcTile{background:#050c0f;border-color:rgba(116,229,212,.29);box-shadow:inset 0 0 0 1px rgba(0,0,0,.7),0 2px 8px rgba(0,0,0,.34)}
+.npcTile:hover,.npcTile.selected{transform:translateY(-1px);border-color:#75ead8;box-shadow:0 0 0 1px rgba(117,234,216,.28),0 0 14px rgba(62,218,198,.14),0 4px 12px rgba(0,0,0,.45)}
+.npcTilePortrait{aspect-ratio:1/1.02;background:#05090b;border-bottom:1px solid rgba(116,229,212,.24)}
+.premiumNpcArt{width:100%;height:100%;display:block;background-repeat:no-repeat;background-color:#05090b;
+  filter:saturate(.86) contrast(1.09) brightness(.94);transition:filter .16s ease,transform .16s ease}
+.npcTile:hover .premiumNpcArt,.npcTile.selected .premiumNpcArt{filter:saturate(.98) contrast(1.08) brightness(1.02);transform:scale(1.015)}
+.npcTileText{padding:6px 8px 8px;min-height:46px;background:linear-gradient(180deg,rgba(4,13,16,.96),rgba(3,9,11,.99))}
+.npcTileText b{font-size:15px;letter-spacing:.01em}
+.npcTileText small{font-size:10px;color:#76cfc1}
+.npcDetail{border-color:rgba(116,229,212,.25);box-shadow:0 10px 28px rgba(0,0,0,.34)}
+.npcDetail>header{background:linear-gradient(90deg,rgba(8,26,28,.95),rgba(4,12,15,.9));border-bottom:1px solid rgba(116,229,212,.22)}
+.npcDetail header h2{font-size:23px;letter-spacing:.035em}
+.npcHeroPortrait{height:330px;margin:0 10px 10px;border-color:rgba(116,229,212,.32);box-shadow:inset 0 0 36px rgba(0,0,0,.45)}
+.premiumNpcHero{position:absolute;inset:0;background-repeat:no-repeat;background-color:#05090b;
+  filter:saturate(.9) contrast(1.07) brightness(.96)}
+.npcHeroPortrait:after{content:"";position:absolute;inset:0;pointer-events:none;
+  box-shadow:inset 0 0 60px rgba(0,0,0,.42),inset 0 -55px 55px rgba(0,0,0,.25)}
+.npcFacts div,.dossierGrid>div{background:linear-gradient(180deg,rgba(6,18,21,.9),rgba(4,12,14,.94));border-color:rgba(116,229,212,.2)}
+.npcDetail section{border-color:rgba(116,229,212,.18)}
+.vizLabel{z-index:2}
+footer{border-top:2px solid rgba(111,81,53,.6);letter-spacing:.15em}
+@media(max-width:1350px){.npcTiles{grid-template-columns:repeat(4,minmax(0,1fr))}.npcWorkspace.premiumWorkspace{grid-template-columns:minmax(0,1.5fr) minmax(350px,.9fr)}}
+@media(max-width:1080px){.npcTiles{grid-template-columns:repeat(3,minmax(0,1fr))}.npcWorkspace.premiumWorkspace{grid-template-columns:1fr}.npcDetail{position:relative}.npcHeroPortrait{height:360px}}
+@media(max-width:650px){.npcTiles{grid-template-columns:repeat(2,minmax(0,1fr))}.npcHeroPortrait{height:300px}}
