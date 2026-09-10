@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#07090c" />
+  <meta name="theme-color" content="#071014" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Doskvol Dashboard · The Sneaks</title>
@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="faction-web.css" />
   <link rel="stylesheet" href="gothic-pass.css" />
   <link rel="stylesheet" href="campaign-pass.css" />
+  <link rel="stylesheet" href="electric-pass.css" />
 </head>
 <body>
   <div class="fog fog-a" aria-hidden="true"></div><div class="fog fog-b" aria-hidden="true"></div>
@@ -33,9 +34,9 @@
   <script src="city-data.js"></script>
   <script src="app.js"></script>
   <script src="faction-web.js"></script>
+  <script src="home-pass.js"></script>
   <script>
-    // Start only after the extension layer has replaced the base renderer.
-    // Without this call, the static frame appears but the nav and main panels remain blank.
+    // Start only after all extension layers have replaced the base renderer.
     if (typeof render === 'function') render();
   </script>
 </body>
