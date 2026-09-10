@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="gothic-pass.css" />
   <link rel="stylesheet" href="campaign-pass.css" />
   <link rel="stylesheet" href="electric-pass.css" />
+  <link rel="stylesheet" href="graphics-pass.css" />
 </head>
 <body>
   <div class="fog fog-a" aria-hidden="true"></div><div class="fog fog-b" aria-hidden="true"></div>
@@ -35,6 +36,9 @@
   <script src="app.js"></script>
   <script src="faction-web.js"></script>
   <script src="home-pass.js"></script>
-  <script src="emergency-dashboard.js"></script>
+  <script src="fallback-render.js"></script>
+  <script>
+    if (typeof render === 'function') render();
+  </script>
 </body>
 </html>
