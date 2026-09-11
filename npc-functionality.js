@@ -1,0 +1,129 @@
+// NPC functionality layer: lore hooks, random rumours, editable NPCs, portrait picker.
+(function(){
+  const STORE='doskvalNpcWorkshopV1';
+  const SPRITE='assets/F7096ECF-A363-4258-98AA-5C2DD3364C38.png?v=workshop1';
+  const IMG_W=1312, IMG_H=1199;
+  const X=[3,131,259,389,518,653,781,921,1053,1184,1310];
+  const Y=[4,118,231,348,466,578,693,805,919,1022,1137];
+  const E=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const load=()=>{try{return JSON.parse(localStorage.getItem(STORE)||'{"custom":[],"overrides":{}}')}catch{return {custom:[],overrides:{}}}};
+  const save=d=>localStorage.setItem(STORE,JSON.stringify(d));
+  const db=load();
+
+  const CURRENT={
+    'Quellyn':'Quietly treating people who cannot risk a physicker, while watching for signs that Spirit Wardens are asking after her.',
+    'Flint':'Trying to acquire a fresh supply of spirit essence without attracting Wardens or rival traffickers.',
+    'Stazia':'Testing a volatile new alchemical mixture and looking for discreet people willing to obtain a rare ingredient.',
+    'Malista':'Meeting someone tied to her forgotten god and deciding whether the Sneaks are useful, dangerous, or both.',
+    'Telda':'Listening to servants, beggars and street children around Six Towers for movement no respectable informant notices.',
+    'Frake':'Examining a new high-security lock and boasting that no thief in Doskvol could open it cleanly.',
+    'Fitz':'Hunting for an unusual relic whose current owner has no idea what it is worth.',
+    'Dowler':'Comparing notes on a dangerous route beyond the lightning barriers and searching for a crew reckless enough to use it.',
+    'Laroze':'Balancing Bluecoat duties against side arrangements and deciding how much risk a favour for the Sneaks is worth.',
+    'Amancio':'Broker­ing introductions between people who should not be seen speaking directly to one another.',
+    'Adelaide Phroaig':'Watching a noble household feud for an opening that could become profitable blackmail or burglary.',
+    'Rigney':'Collecting tavern gossip and quietly sorting real opportunities from drunken nonsense.',
+    'Lyssa':'Trying to secure her grip on the Crows while rivals still whisper about Roric’s death.',
+    'Roric':'His death still drives rumours, ghost stories and questions about who benefited most from his removal.',
+    'Bell':'Carrying the Crows’ warnings into Crow’s Foot and noting who flinches, who lies, and who reaches for a weapon.',
+    'Bazso Baz':'Looking for leverage against the Red Sashes while keeping the Lampblacks’ street crews loyal and angry.',
+    'Pickett':'Running messages, collections and intimidation for the Lampblacks and hearing which corners are about to turn violent.',
+    'Henner':'Watching Red Sash movements and looking for soft targets the Lampblacks can hit quickly.',
+    'Mylera Klev':'Recruiting blades, protecting the Red Sashes’ school and seeking advantage in the war with the Lampblacks.',
+    'Slate':'Planning a theft that depends on masks, timing and information rather than brute force.',
+    'Loop':'Appraising a strange object the Wraiths acquired and worrying that it may be more dangerous than valuable.',
+    'Nessa':'Looking for opportunities that strengthen the Gray Cloaks without making them look like ordinary street thugs.',
+    'Hutch':'Pushing for a bolder response to enemies and looking for someone willing to make the first ugly move.',
+    'Hutton':'Fuming over losses and insults, including the Sneaks’ theft, while looking for a target that proves the Grinders are not weak.',
+    'Sercy':'Turning anger into organization—meetings, routes, sympathizers and supplies for the Grinders.',
+    'Derret':'Acting as muscle while quietly sizing up which enemies are actually dangerous.',
+    'Roslyn':'Managing the Dimmer Sisters’ outside business while keeping strangers away from the townhouse and its secrets.',
+    'Irelen':'Repairing or modifying strange spark-craft for the Dimmer Sisters and hunting for components nobody asks questions about.',
+    'Eisele':'Following supernatural disturbances through the canals and deciding which ones require Gondolier intervention.',
+    'Griggs':'Studying a haunting that behaves unlike an ordinary ghost and suspecting something older is underneath it.',
+    'Margette Vale':'Looking for a profitable Void Sea run and judging whether a new employer is worth trusting.',
+    'Bear':'Keeping the Fog Hounds ready for trouble and pushing back against anyone who mistakes restraint for weakness.',
+    'Goldie':'Recalculating a dangerous route and searching for weather, tide and spirit-field signs others overlook.',
+    'Lord Scurlock':'Pursuing another arcane secret while measuring the cost of his ancient debt to Setarra.',
+    'Setarra':'Pressing toward the release of ancient sea demons chained beneath the harbor and testing who can be manipulated into helping.',
+    'Seresh':'Preparing the Silver Nails for another ghost-hunting job and watching for occult threats ordinary mercenaries cannot handle.',
+    'Tuhan':'Scouting routes, targets and supernatural danger for the Silver Nails before anyone else knows they are interested.',
+    'Ulf Ironborn':'Building a protection racket and looking for anyone who will challenge his claim to new turf.',
+    'Havid':'Turning Ulf’s fury into practical plans, alliances and retaliation.',
+    'Commander Clelland':'Managing corruption, pressure from above and rival interests inside the City Watch.',
+    'Captain Michter':'Drilling Bluecoats and identifying ambitious officers useful for factional maneuvering.',
+    'Captain Vale':'Moving weapons, uniforms and supplies while keeping track of what quietly disappears from official stores.',
+    'Bakoros':'Lecturing, observing and helping the Spirit Wardens lay traps for whoever is trying to infiltrate them.',
+    'Elder Rowan':'Protecting Church influence while deciding which strange spiritual practices can be tolerated and which must be contained.',
+    'Preceptor Dunvil':'Pursuing an obsessive occult research problem whose implications may be more dangerous than the experiment itself.',
+    'Una Farros':'Working on spark-craft research that could attract wealthy patrons, thieves, academics or all three.',
+    'The Tower':'Moving the Unseen toward deeper infiltration while remaining almost impossible to identify directly.',
+    'The Star':'Coordinating hidden operations for the Unseen and testing intermediaries before trusting them with anything important.',
+    'Grull':'Maintaining his coach-driver cover while watching people who do not know they are being watched.'
+  };
+
+  const R={
+    'The Crows':["Someone in Crow’s Foot claims Roric’s ghost has been seen near an old Crow safehouse.","Lyssa is said to be paying unusually well for information about who still speaks Roric’s name with loyalty.","A neutral gang has been quietly sounded out about backing the Crows if the district erupts again."],
+    'The Lampblacks':["Bazso’s people are buying lamp oil, cheap weapons and bandages in quantities that suggest trouble.","A Lampblack crew thinks one Red Sash drug den has a weak rear entrance.","Someone inside the Lampblacks is skimming coin and praying Bazso never notices."],
+    'The Red Sashes':["The Red Sashes are recruiting every useful blade they can reach.","A well-connected Iruvian family is furious that their child was drawn into gang business.","A shipment of alchemical supplies for the Red Sashes may be vulnerable before it reaches Crow’s Foot."],
+    'The Wraiths':["A masked Wraith was seen surveying rooftops near Nightmarket after midnight.","The Wraiths are quietly evaluating something stolen that may be occult rather than merely valuable.","Someone is mapping watch patrols around a target no one has yet identified."],
+    'Gray Cloaks':["The Gray Cloaks are looking for work that restores their reputation without making them servants of another faction.","A former Bluecoat has offered Nessa information in exchange for protection.","Someone in the Watch still carries a personal grudge against the Gray Cloaks."],
+    'The Grinders':["The Grinders are talking openly about retaliation and privately about supplies.","A worker sympathetic to the Grinders can get people into a restricted industrial site.","The Grinders believe a recent theft was meant to humiliate them, not merely rob them."],
+    'The Dimmer Sisters':["People near the Sisters’ townhouse hear movement at hours when no lamps are lit.","An outsider is trying to learn what the Sisters keep beneath their home.","Someone claims the Sisters have lost influence and their enemies are circling."],
+    'Gondoliers':["The Gondoliers have marked one canal stretch as unsafe after dark, but refuse to explain why.","A dead spirit has been seen moving against the current.","Someone is dumping occult residue into the canals and the Gondoliers want it stopped."],
+    'The Fog Hounds':["A Void Sea cargo has become valuable because its original buyer disappeared.","The Fog Hounds know a route that avoids ordinary inspection, but not supernatural trouble.","A rival captain is spreading word that Margette Vale has gone soft."],
+    'Lord Scurlock':["Scurlock is seeking another obscure arcane text and will pay more than its market value.","People who visit one of Scurlock’s holdings sometimes remember less than they should.","There are whispers that his obligation to Setarra has become urgent."],
+    'Scurlock / occult network':["Something chained beneath the harbor is waking or being awakened.","Setarra wants information about old cataclysmic bindings, not coin.","A cult has begun dreaming of deep water, stone and broken chains."],
+    'The Silver Nails':["The Silver Nails are preparing for a supernatural hunt and buying specialized gear.","A Severosi scout says a spirit trail crosses territory claimed by someone powerful.","A noble quietly wants the Nails to solve a ghost problem without alerting the Spirit Wardens."],
+    'Ulf Ironborn':["Ulf’s people are testing which local businesses will pay protection without a fight.","Anti-Skovlander hostility is rising and Ulf is close to answering insult with blood.","Someone wants Ulf pointed at a rival and thinks they can survive the consequences."],
+    'Bluecoats':["A patrol schedule has been altered for reasons no constable will explain.","Confiscated goods are disappearing before they reach evidence storage.","An officer is selling information twice—once to criminals and once to their enemies."],
+    'Spirit Wardens':["The Wardens believe someone is trying to infiltrate their anonymous ranks.","A trap is being prepared, but nobody outside Bellweather knows where it will close.","A deathseeker crow behaved strangely after a recent killing, and a Warden took personal interest."],
+    'Church of Ecstasy':["A private Church gathering is discussing a troubling occult discovery.","A donor wants a scandal buried before it damages Church influence.","A researcher has crossed a line that even other Church scholars consider unwise."],
+    'Sparkwrights':["A prototype has gone missing before its public demonstration.","A wealthy patron is trying to buy exclusive rights to a dangerous invention.","Someone at Charterhall is falsifying research records to hide an accident."],
+    'The Unseen':["A respectable citizen has begun acting on instructions from someone they cannot identify.","An Unseen intermediary is recruiting without ever naming the organization.","Someone powerful is quietly replacing loyal staff with people who answer elsewhere."],
+    'Sneaks contact · Six Towers':["A Spirit Warden has been asking careful questions in Six Towers.","Someone is paying for information about unusual herbs and occult medicine.","A patient brought in a wound that looks less like violence and more like possession."],
+    'Whisper contact · Six Towers':["A spirit bottle changed hands twice in one night and both buyers later vanished.","Someone is purchasing electroplasmic supplies under false names.","A condemned manor nearby has begun attracting ghosts for no obvious reason."],
+    'Leech contact':["A rare reagent has suddenly doubled in price.","Someone is buying poisons while insisting they are for medicine.","A new drug is circulating with an effect no local alchemist recognizes."],
+    'Lurk contact':["A servant knows a back stair that never appears on the estate plans.","A roof route through the district has become dangerous after recent patrol changes.","Someone has begun paying street children to watch particular doors."],
+    'Shadows crew contact':["A wealthy target has changed security arrangements unexpectedly.","A broker is quietly seeking thieves who can work without leaving bodies.","An object thought worthless has attracted the attention of three different buyers."]
+  };
+  function rumoursFor(name,group){const custom=(db.overrides[name]&&db.overrides[name].rumours)||[];return custom.length?custom:(R[group]||["Someone nearby knows more than they are admitting.","A small favour could expose a much larger opportunity.","Two factions are interested in the same thing for very different reasons."]);}
+  function activityFor(name){return db.overrides[name]?.activity||CURRENT[name]||'They are pursuing a private objective connected to their role and watching for useful leverage.';}
+  function randomRumour(name,group){const a=rumoursFor(name,group);return a[Math.floor(Math.random()*a.length)];}
+
+  function cellRect(n){const z=n-1,c=z%10,r=Math.floor(z/10),pad=4;return {x0:X[c]+pad,x1:X[c+1]-pad,y0:Y[r]+pad,y1:Y[r+1]-pad};}
+  function paintPortrait(el,n){const q=cellRect(n||1),rect=el.getBoundingClientRect(),bw=Math.max(1,rect.width),bh=Math.max(1,rect.height),cw=q.x1-q.x0,ch=q.y1-q.y0,s=Math.max(bw/cw,bh/ch),sw=IMG_W*s,sh=IMG_H*s,left=-(q.x0*s)+(bw-cw*s)/2,top=-(q.y0*s)+(bh-ch*s)/2;Object.assign(el.style,{backgroundImage:`url(${SPRITE})`,backgroundSize:`${sw}px ${sh}px`,backgroundPosition:`${left}px ${top}px`,backgroundRepeat:'no-repeat'});}
+  function portraitNode(n,cls=''){const d=document.createElement('i');d.className=cls;requestAnimationFrame(()=>paintPortrait(d,n));return d;}
+
+  function groupFromDetail(detail){return detail.querySelector('.npcFacts div:nth-child(4) b')?.textContent?.trim()||detail.querySelector('header small')?.textContent?.split('·').pop()?.trim()||'';}
+  function enhanceDetail(){
+    const detail=document.querySelector('.npcDetail'); if(!detail)return;
+    const name=detail.querySelector('h2')?.textContent?.trim(); if(!name)return;
+    const group=groupFromDetail(detail),ov=db.overrides[name];
+    if(ov){if(ov.role)detail.querySelector('header small')&&(detail.querySelector('header small').textContent=`${ov.role} · ${ov.group||group}`);const p=detail.querySelector('section p');if(p&&ov.desc)p.textContent=ov.desc;}
+    let box=detail.querySelector('.npcLoreBox');
+    if(!box){box=document.createElement('div');box.className='npcLoreBox';detail.querySelector('.npcDetailBtns')?.before(box);}
+    const rum=randomRumour(name,ov?.group||group);
+    box.innerHTML=`<h3>AT THE TABLE</h3><div class="npcLoreGrid"><div class="npcLoreCard"><label>WHAT THEY'RE DOING</label><p>${E(activityFor(name))}</p></div><div class="npcLoreCard"><label>RUMOUR / LEAD</label><p class="npcRumourText">${E(rum)}</p></div></div><div class="npcLoreActions"><button class="rerollRumour">NEW RUMOUR</button><button class="editThisNpc">EDIT NPC</button></div>`;
+    box.querySelector('.rerollRumour').onclick=()=>{box.querySelector('.npcRumourText').textContent=randomRumour(name,ov?.group||group)};
+    box.querySelector('.editThisNpc').onclick=()=>openWorkshop(name);
+    if(ov?.portrait){const hero=detail.querySelector('.npcHeroPortrait .realNpcSprite');if(hero)requestAnimationFrame(()=>paintPortrait(hero,ov.portrait));}
+  }
+
+  function addWorkshopButton(){const bar=document.querySelector('.npcToolbar');if(!bar||bar.querySelector('.npcWorkshopBtn'))return;const b=document.createElement('button');b.className='npcWorkshopBtn';b.textContent='NPC WORKSHOP';b.onclick=()=>openWorkshop();bar.appendChild(b);}
+
+  function getExisting(name){const d=document.querySelector('.npcDetail');if(!name||!d||d.querySelector('h2')?.textContent?.trim()!==name)return {name};const facts=[...d.querySelectorAll('.npcFacts b')].map(x=>x.textContent.trim());return {name,role:d.querySelector('header small')?.textContent?.split('·')[0]?.trim()||'',group:facts[3]||groupFromDetail(d),status:facts[1]||'Contact',desc:d.querySelector('section p')?.textContent?.trim()||''};}
+  function openWorkshop(name=''){
+    document.querySelector('.npcWorkshop')?.remove();const host=document.querySelector('.npcWorkspace')?.parentElement||document.querySelector('#main');if(!host)return;const old=db.overrides[name]||db.custom.find(x=>x.name===name)||getExisting(name);let portrait=old.portrait||1;
+    const w=document.createElement('div');w.className='npcWorkshop';w.innerHTML=`<div class="npcWorkshopHead"><h2>${name?'Edit NPC':'Create NPC'}</h2><button class="closeWorkshop">CLOSE</button></div><div class="npcWorkshopGrid"><label>Name<input id="nwName" value="${E(old.name||'')}"></label><label>Role<input id="nwRole" value="${E(old.role||'')}"></label><label>Faction / Network<input id="nwGroup" value="${E(old.group||'')}"></label><label>Status<input id="nwStatus" value="${E(old.status||'Contact')}"></label><label class="wide">Description<textarea id="nwDesc">${E(old.desc||'')}</textarea></label><label class="wide">What are they doing right now?<textarea id="nwActivity">${E(old.activity||CURRENT[name]||'')}</textarea></label><label class="wide">Rumours / leads — one per line<textarea id="nwRumours">${E((old.rumours||[]).join('\n'))}</textarea></label><div class="portraitChooser"><label>Portrait — choose any face from the 100-face reserve</label><div class="portraitChooserGrid"></div></div><div class="npcWorkshopActions"><button class="saveNpc">SAVE NPC</button></div></div>`;
+    host.prepend(w);w.scrollIntoView({behavior:'smooth',block:'start'});w.querySelector('.closeWorkshop').onclick=()=>w.remove();
+    const pg=w.querySelector('.portraitChooserGrid');for(let i=1;i<=100;i++){const b=document.createElement('button');b.type='button';b.className='portraitChoice'+(i===portrait?' active':'');b.dataset.n=i;b.innerHTML=`<span>${i}</span>`;b.appendChild(portraitNode(i));b.onclick=()=>{portrait=i;pg.querySelectorAll('.portraitChoice').forEach(x=>x.classList.toggle('active',+x.dataset.n===i));};pg.appendChild(b);}setTimeout(()=>pg.querySelectorAll('.portraitChoice i').forEach((el,i)=>paintPortrait(el,i+1)),50);
+    w.querySelector('.saveNpc').onclick=()=>{const val=id=>w.querySelector(id).value.trim(),nm=val('#nwName');if(!nm)return alert('Give the NPC a name first.');const rec={name:nm,role:val('#nwRole'),group:val('#nwGroup'),status:val('#nwStatus'),desc:val('#nwDesc'),activity:val('#nwActivity'),rumours:val('#nwRumours').split('\n').map(s=>s.trim()).filter(Boolean),portrait};if(name){if(name!==nm){db.custom=db.custom.filter(x=>x.name!==name);db.overrides[name]=undefined;}db.overrides[nm]=rec;}else{db.custom=db.custom.filter(x=>x.name!==nm);db.custom.push(rec);}save(db);w.remove();renderCustomTiles();setTimeout(enhanceDetail,80);};
+  }
+
+  function showCustom(rec){const d=document.querySelector('.npcDetail');if(!d)return;d.innerHTML=`<header><div><h2>${E(rec.name)}</h2><small>${E(rec.role)} · ${E(rec.group)}</small></div></header><div class="npcHeroPortrait"></div><div class="npcFacts"><div><label>ROLE</label><b>${E(rec.role)}</b></div><div><label>CONNECTION</label><b>${E(rec.status)}</b></div><div><label>SOURCE</label><b>Campaign</b></div><div><label>FACTION / NETWORK</label><b>${E(rec.group)}</b></div></div><section><h3>DESCRIPTION</h3><p>${E(rec.desc)}</p></section><div class="npcDetailBtns"><button class="editCustom">EDIT NPC</button></div>`;const hero=d.querySelector('.npcHeroPortrait');hero.appendChild(portraitNode(rec.portrait,'realNpcSprite realNpcHeroSprite allNpcPainted'));d.querySelector('.editCustom').onclick=()=>openWorkshop(rec.name);setTimeout(()=>{const el=hero.querySelector('i');paintPortrait(el,rec.portrait);enhanceDetail();},30);}
+  function renderCustomTiles(){const tiles=document.querySelector('.npcTiles');if(!tiles)return;tiles.querySelectorAll('.customNpc').forEach(x=>x.remove());db.custom.forEach(rec=>{const b=document.createElement('button');b.className='npcTile customNpc';b.dataset.npc=rec.name;b.innerHTML=`<div class="npcTilePortrait"></div><div class="npcTileText"><b>${E(rec.name)} <span class="npcCustomBadge">CUSTOM</span></b><small>${E(rec.role)} · ${E(rec.group)}</small></div>`;const p=b.querySelector('.npcTilePortrait');p.style.position='relative';const i=portraitNode(rec.portrait,'realNpcSprite allNpcPainted');Object.assign(i.style,{position:'absolute',inset:'0'});p.appendChild(i);b.onclick=()=>{document.querySelectorAll('.npcTile').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');showCustom(rec);};tiles.appendChild(b);setTimeout(()=>paintPortrait(i,rec.portrait),25);});}
+
+  function apply(){addWorkshopButton();renderCustomTiles();enhanceDetail();}
+  let t;const mo=new MutationObserver(()=>{clearTimeout(t);t=setTimeout(apply,60)});mo.observe(document.documentElement,{subtree:true,childList:true});document.addEventListener('click',()=>setTimeout(apply,80),true);window.addEventListener('resize',()=>setTimeout(()=>document.querySelectorAll('.portraitChoice i').forEach((el,i)=>paintPortrait(el,i+1)),50));setTimeout(apply,300);setTimeout(apply,900);
+})();
