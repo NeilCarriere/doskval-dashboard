@@ -1,8 +1,10 @@
-// Doskval NPC portraits v6 — curated one-to-one assignments from the 100-face reserve library.
+// Doskval NPC portraits v7 — curated 100-face library with corrected 10x10 sprite geometry.
 (function(){
-  const SPRITE='assets/F7096ECF-A363-4258-98AA-5C2DD3364C38.png?v=curated100a';
+  const SPRITE='assets/F7096ECF-A363-4258-98AA-5C2DD3364C38.png?v=curated100b';
   const COLS=10;
-  // Each NPC has a unique cell selected to fit age, role, faction and occult character.
+  // The uploaded sheet has a footer below the 10 portrait rows, so vertical positioning
+  // cannot use a simple 1000% x 1000% grid. These row positions compensate for that footer.
+  const ROW_POS=[0,10.6853,21.0943,31.8718,42.7413,53.0582,63.6514,74.3368,84.4694,93.9573];
   const CELL={
     'Quellyn':86,'Flint':88,'Stazia':59,'Malista':69,'Telda':74,'Frake':93,'Fitz':11,
     'Dowler':25,'Laroze':34,'Amancio':9,'Adelaide Phroaig':21,'Rigney':16,
@@ -24,16 +26,34 @@
     d.className=hero?'realNpcSprite realNpcHeroSprite allNpcPainted':'realNpcSprite allNpcPainted';
     d.setAttribute('role','img');d.setAttribute('aria-label','Campaign visualization portrait of '+name);
     d.style.backgroundImage=`url(${SPRITE})`;
-    d.style.backgroundSize='1000% 1000%';
-    d.style.backgroundPosition=`${c*(100/9)}% ${r*(100/9)}%`;
-    d.style.backgroundRepeat='no-repeat';d.style.imageRendering='auto';
-    d.style.transform='scale(1.10)';d.style.transformOrigin='50% 43%';
+    // 1057.32% vertically maps the 10 portrait rows while excluding the footer from the grid math.
+    d.style.backgroundSize='1000% 1057.32%';
+    d.style.backgroundPosition=`${c*(100/9)}% ${ROW_POS[r]}%`;
+    d.style.backgroundRepeat='no-repeat';
+    d.style.imageRendering='auto';
+    d.style.transform='none';
+    d.style.transformOrigin='center';
+    d.style.overflow='hidden';
     return d;
   }
   function selected(){return document.querySelector('.npcTile.selected')?.dataset?.npc||document.querySelector('.npcDetail h2')?.textContent?.trim()||''}
   function apply(){
-    document.querySelectorAll('.npcTile').forEach(tile=>{const name=tile.dataset.npc||tile.querySelector('.npcTileText b')?.textContent?.trim(),box=tile.querySelector('.npcTilePortrait');if(!name||!box)return;if(box.dataset.portraitV6===name)return;box.innerHTML='';box.appendChild(make(name,false));box.dataset.portraitV6=name});
-    const name=selected(),hero=document.querySelector('.npcHeroPortrait');if(name&&hero&&hero.dataset.portraitV6!==name){hero.innerHTML='';hero.appendChild(make(name,true));const lab=document.createElement('span');lab.className='vizLabel';lab.textContent='CAMPAIGN VISUALIZATION';hero.appendChild(lab);hero.dataset.portraitV6=name}
+    document.querySelectorAll('.npcTile').forEach(tile=>{
+      const name=tile.dataset.npc||tile.querySelector('.npcTileText b')?.textContent?.trim(),box=tile.querySelector('.npcTilePortrait');
+      if(!name||!box)return;
+      box.style.overflow='hidden';
+      if(box.dataset.portraitV7===name)return;
+      box.innerHTML='';box.appendChild(make(name,false));box.dataset.portraitV7=name;
+    });
+    const name=selected(),hero=document.querySelector('.npcHeroPortrait');
+    if(name&&hero){
+      hero.style.overflow='hidden';
+      if(hero.dataset.portraitV7!==name){
+        hero.innerHTML='';hero.appendChild(make(name,true));
+        const lab=document.createElement('span');lab.className='vizLabel';lab.textContent='CAMPAIGN VISUALIZATION';hero.appendChild(lab);
+        hero.dataset.portraitV7=name;
+      }
+    }
     document.querySelector('.npcWorkspace')?.classList.add('premiumWorkspace');document.querySelector('.npcGallery')?.classList.add('premiumGallery');
   }
   const obs=new MutationObserver(()=>requestAnimationFrame(apply));obs.observe(document.documentElement,{subtree:true,childList:true});document.addEventListener('click',()=>setTimeout(apply,0),true);setTimeout(apply,50);setTimeout(apply,300);setTimeout(apply,900);
