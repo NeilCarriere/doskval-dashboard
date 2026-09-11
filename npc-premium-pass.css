@@ -28,7 +28,7 @@ body{background:
 .npcDetail{border-color:rgba(116,229,212,.25);box-shadow:0 10px 28px rgba(0,0,0,.34)}
 .npcDetail>header{background:linear-gradient(90deg,rgba(8,26,28,.95),rgba(4,12,15,.9));border-bottom:1px solid rgba(116,229,212,.22)}
 .npcDetail header h2{font-size:23px;letter-spacing:.035em}
-.npcHeroPortrait{height:330px;margin:0 10px 10px;border-color:rgba(116,229,212,.32);box-shadow:inset 0 0 36px rgba(0,0,0,.45)}
+.npcHeroPortrait{height:300px;margin:0 10px 10px;border-color:rgba(116,229,212,.32);box-shadow:inset 0 0 36px rgba(0,0,0,.45)}
 .premiumNpcHero{position:absolute;inset:0;background-repeat:no-repeat;background-color:#05090b;
   filter:saturate(.9) contrast(1.07) brightness(.96)}
 .npcHeroPortrait:after{content:"";position:absolute;inset:0;pointer-events:none;
@@ -37,6 +37,51 @@ body{background:
 .npcDetail section{border-color:rgba(116,229,212,.18)}
 .vizLabel{z-index:2}
 footer{border-top:2px solid rgba(111,81,53,.6);letter-spacing:.15em}
+
+/* Portrait quality pass: never use nearest-neighbour rendering and soften JPEG macro-blocks. */
+.realNpcSprite,.realNpcHeroSprite,.allNpcPainted,.premiumNpcArt,.premiumNpcHero{
+  image-rendering:auto!important;
+  -ms-interpolation-mode:bicubic;
+  backface-visibility:hidden;
+  transform-style:preserve-3d;
+  background-repeat:no-repeat!important;
+  background-color:#05090b;
+}
+.npcTile .realNpcSprite,.npcTile .allNpcPainted{
+  filter:saturate(.93) contrast(1.04) brightness(.98) blur(.12px)!important;
+  transform:translateZ(0) scale(1.003)!important;
+}
+.npcTile.selected .realNpcSprite,.npcTile:hover .realNpcSprite,.npcTile.selected .allNpcPainted,.npcTile:hover .allNpcPainted{
+  filter:saturate(.98) contrast(1.045) brightness(1) blur(.08px)!important;
+}
+.npcHeroPortrait{
+  background:
+    radial-gradient(circle at 50% 42%,rgba(72,151,142,.11),transparent 38%),
+    linear-gradient(180deg,#071417,#03080a)!important;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.npcHeroPortrait .realNpcHeroSprite{
+  position:absolute!important;
+  left:50%!important;
+  top:50%!important;
+  right:auto!important;
+  bottom:auto!important;
+  width:min(100%,300px)!important;
+  height:min(100%,300px)!important;
+  transform:translate(-50%,-50%) translateZ(0)!important;
+  filter:saturate(.96) contrast(1.035) brightness(.99) blur(.14px)!important;
+  box-shadow:0 0 0 1px rgba(116,229,212,.18),0 0 42px rgba(0,0,0,.55);
+}
+.npcHeroPortrait:before{
+  content:"";
+  position:absolute;
+  inset:12px;
+  border:1px solid rgba(116,229,212,.11);
+  pointer-events:none;
+  z-index:1;
+}
 @media(max-width:1350px){.npcTiles{grid-template-columns:repeat(4,minmax(0,1fr))}.npcWorkspace.premiumWorkspace{grid-template-columns:minmax(0,1.5fr) minmax(350px,.9fr)}}
-@media(max-width:1080px){.npcTiles{grid-template-columns:repeat(3,minmax(0,1fr))}.npcWorkspace.premiumWorkspace{grid-template-columns:1fr}.npcDetail{position:relative}.npcHeroPortrait{height:360px}}
-@media(max-width:650px){.npcTiles{grid-template-columns:repeat(2,minmax(0,1fr))}.npcHeroPortrait{height:300px}}
+@media(max-width:1080px){.npcTiles{grid-template-columns:repeat(3,minmax(0,1fr))}.npcWorkspace.premiumWorkspace{grid-template-columns:1fr}.npcDetail{position:relative}.npcHeroPortrait{height:320px}}
+@media(max-width:650px){.npcTiles{grid-template-columns:repeat(2,minmax(0,1fr))}.npcHeroPortrait{height:280px}}
