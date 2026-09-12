@@ -1,0 +1,50 @@
+/* Phase 1 — map + visual atmosphere pass. No audio. */
+:root{--p1-brass:#b28a52;--p1-green:#65d7c5;--p1-soot:#020405;--p1-iron:#233033;--p1-parchment:#e8dcc4}
+body{background:#030607;position:relative}
+body:before{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:.14;background:repeating-linear-gradient(103deg,transparent 0 58px,rgba(181,218,211,.035) 59px 60px,transparent 61px 111px);mix-blend-mode:screen;animation:p1rain 9s linear infinite}
+body:after{content:'';position:fixed;inset:-20%;z-index:9997;pointer-events:none;opacity:.16;background:radial-gradient(ellipse at 12% 80%,rgba(105,178,167,.16),transparent 24%),radial-gradient(ellipse at 75% 12%,rgba(120,154,154,.10),transparent 22%),radial-gradient(ellipse at 62% 65%,rgba(76,104,103,.10),transparent 28%);filter:blur(18px);animation:p1fog 22s ease-in-out infinite alternate}
+@keyframes p1rain{to{background-position:0 180px}}
+@keyframes p1fog{0%{transform:translate3d(-2%,0,0) scale(1)}100%{transform:translate3d(3%,1%,0) scale(1.04)}}
+
+.masthead{border-bottom:1px solid #735b37;box-shadow:0 12px 30px #000d,inset 0 -1px rgba(101,215,197,.08)}
+.masthead:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent 0 37%,rgba(5,12,14,.15) 52%,rgba(3,7,9,.55) 100%),url('assets/doskvol-skyline.svg') 62% bottom/58% 96% no-repeat;opacity:.62;filter:drop-shadow(0 -2px 8px rgba(101,215,197,.08))}
+.masthead .lantern{position:relative;z-index:3;color:#efc879;text-shadow:0 0 6px #ffb348,0 0 18px #ff9d2f;animation:p1lamp 4.7s infinite}
+@keyframes p1lamp{0%,18%,22%,63%,100%{opacity:1}20%,21%,65%{opacity:.62}64%{opacity:.82}}
+.brand,.motto,.cityline{position:relative;z-index:2}
+
+.sidebar{background:linear-gradient(180deg,#081012 0,#05090a 56%,#0b0a08 100%);border-right:1px solid #4f493b;box-shadow:8px 0 30px #0008,inset -1px 0 rgba(101,215,197,.05)}
+.navbtn{position:relative;overflow:hidden;border-left:2px solid transparent}
+.navbtn:before{content:'';position:absolute;left:8px;right:8px;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#4f5c59,transparent);opacity:.45}
+.navbtn.active{border-left-color:var(--p1-green);box-shadow:inset 3px 0 10px rgba(101,215,197,.08)}
+
+.panel{position:relative;overflow:hidden;box-shadow:0 12px 28px #0008,inset 0 0 0 1px rgba(255,255,255,.015)}
+.panel:after{content:'';position:absolute;right:8px;top:8px;width:5px;height:5px;border-radius:50%;background:#a47d48;box-shadow:0 0 0 1px #251b11,0 0 7px rgba(226,170,83,.14);opacity:.65;pointer-events:none}
+.dashboard-grid>.panel:nth-child(3n+1){border-top-color:#55706e}.dashboard-grid>.panel:nth-child(3n+2){border-top-color:#766242}.dashboard-grid>.panel:nth-child(3n){border-top-color:#493e3d}
+.panel>header{box-shadow:inset 0 -1px rgba(178,138,82,.12)}
+
+/* Map desk becomes a cleaner tactical chart while retaining the canonical base image. */
+.main.mapMode{background:radial-gradient(circle at 44% 18%,#102023 0,#070c0e 34%,#020405 78%)}
+.main.mapMode:after{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.09;background:repeating-linear-gradient(0deg,transparent 0 39px,#8ba8a21c 40px),repeating-linear-gradient(90deg,transparent 0 39px,#8ba8a21c 40px)}
+.mapPageHead{position:relative;overflow:hidden}
+.mapPageHead:after{content:'IMPERIAL SURVEY · GM COPY';position:absolute;right:18px;top:13px;color:#6d817c;font:600 .62rem/1 Georgia,serif;letter-spacing:.16em}
+.mapTools{border-top:2px solid #695637;box-shadow:0 9px 18px #0007}
+.cartographyPanel{position:relative;border:1px solid #8a7048;box-shadow:0 18px 42px #000d,inset 0 0 0 1px #1a2424}
+.cartographyPanel:before{content:'';position:absolute;inset:8px;z-index:7;pointer-events:none;border:1px solid rgba(182,148,89,.17)}
+.mapCanvas{filter:saturate(.82) contrast(1.05) brightness(.92)}
+.mapShade{background:radial-gradient(circle at 50% 45%,transparent 22%,rgba(1,4,5,.16) 72%,rgba(0,0,0,.38) 100%),linear-gradient(180deg,rgba(51,87,83,.03),rgba(2,4,5,.18))}
+.mapMarker{transition:transform .18s ease,filter .18s ease,opacity .18s ease}
+.mapMarker.selectedDistrict span,.districtMarker:hover span{box-shadow:0 0 0 4px rgba(101,215,197,.08),0 0 18px rgba(101,215,197,.42)}
+.mapMarker.selectedDistrict b{color:#f6ead0;border-color:#c19b60;background:#101715f2}
+.factionMarker{filter:drop-shadow(0 0 4px rgba(101,215,197,.15))}
+.mapDossier{border-top:3px double #9a7747;background:linear-gradient(150deg,rgba(24,22,18,.985),rgba(4,10,11,.985));box-shadow:0 17px 38px #000d,inset 0 0 55px #0008}
+.mapDossier:before{content:'DISTRICT DOSSIER';display:block;margin:-4px 0 9px;color:#718b85;font-size:.65rem;letter-spacing:.18em}
+.districtIntel section:nth-child(1){border-left-color:#557b75}.districtIntel section:nth-child(2){border-left-color:#947449}.districtIntel section:nth-child(3){border-left-color:#7c5151}
+.scoreSpark{position:relative;overflow:hidden}.scoreSpark:after{content:'✦';position:absolute;right:10px;top:8px;color:#79c9bb55;font-size:1.5rem}
+
+/* Subtle gaslights: decorative only, no interaction. */
+.p1-gaslights{position:fixed;inset:0;z-index:9996;pointer-events:none}
+.p1-gaslights i{position:absolute;width:4px;height:4px;border-radius:50%;background:#efbd68;box-shadow:0 0 5px #f0b24e,0 0 17px #d7822b,0 0 31px rgba(215,130,43,.22);animation:p1lamp 5.3s infinite}
+.p1-gaslights i:nth-child(1){left:18%;top:126px;animation-delay:-1.2s}.p1-gaslights i:nth-child(2){left:52%;top:108px;animation-delay:-3.1s}.p1-gaslights i:nth-child(3){right:13%;top:138px;animation-delay:-.7s}
+
+@media(max-width:820px){body:before{opacity:.07}.masthead:before{background-size:95% 90%;background-position:center bottom;opacity:.32}.p1-gaslights i:nth-child(2){display:none}.mapPageHead:after{display:none}}
+@media(prefers-reduced-motion:reduce){body:before,body:after,.masthead .lantern,.p1-gaslights i{animation:none!important}}
