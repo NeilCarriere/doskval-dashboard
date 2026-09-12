@@ -122,7 +122,9 @@
     const group=groupFromDetail(detail),ov=db.overrides[name];
     if(ov){if(ov.role)detail.querySelector('header small')&&(detail.querySelector('header small').textContent=`${ov.role} · ${ov.group||group}`);const p=detail.querySelector('section p');if(p&&ov.desc)p.textContent=ov.desc;}
     let box=detail.querySelector('.npcLoreBox');
+    if(box?.dataset.npc===name)return;
     if(!box){box=document.createElement('div');box.className='npcLoreBox';detail.querySelector('.npcDetailBtns')?.before(box);}
+    box.dataset.npc=name;
     const contact=isCrewContact(name),rum=randomRumour(name,ov?.group||group),profile=CONTACT_INTEL[name];
     box.innerHTML=contact
       ?`<h3>GATHER INFORMATION</h3><div class="npcLoreCard npcActivityCard"><label>WHAT THEY'RE DOING</label><p>${E(activityFor(name))}</p></div><div class="contactIntel"><label>WHAT ${E(name.toUpperCase())} KNOWS</label><p>${E(profile?.specialty||'Local knowledge, useful connections and rumours.')}</p><fieldset class="intelQuality" aria-label="Information quality"><legend>RESULT QUALITY</legend><label><input type="radio" name="intelQuality" value="limited"> Limited</label><label><input type="radio" name="intelQuality" value="standard" checked> Standard</label><label><input type="radio" name="intelQuality" value="great"> Great</label></fieldset><button class="gatherIntel">ASK ${E(name.toUpperCase())}</button><div class="intelResult" aria-live="polite"><span>Choose the result quality, then ask what the contact knows.</span></div></div><div class="npcLoreActions"><button class="editThisNpc">EDIT NPC</button></div>`

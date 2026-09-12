@@ -15,9 +15,9 @@
     }
   };
 
-  // The rumour button already performs its own reroll at the target. Prevent the
-  // later document-level refresh handler from immediately rerolling it a second time.
+  // These controls update their own panel. Prevent the later document-level refresh
+  // handler from immediately rebuilding that panel and erasing the visible result.
   document.addEventListener('click',event=>{
-    if(event.target?.closest?.('.rerollRumour')) event.stopImmediatePropagation();
+    if(event.target?.closest?.('.rerollRumour, .contactIntel')) event.stopImmediatePropagation();
   });
 })();
