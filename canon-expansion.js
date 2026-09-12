@@ -36,6 +36,13 @@
     ['Deathlands Scavengers','II','Weak','The Fringe'],
     ['The Weeping Lady','II','Weak','The Fringe']
   ];
+  const deepCutsAdditions=[
+    ['Covenant','VI','Strong','Institutions','A major Imperial institution expanded in Deep Cuts.'],
+    ['Unity Commission','V','Strong','Institutions','A major civic institution introduced in Deep Cuts.'],
+    ['Rowan House','IV','Strong','Institutions','A powerful institution introduced in Deep Cuts.'],
+    ['Ironworks Labor','II','Strong','Labor & Trade','Coalridge and Charhollow laborers organizing against brutal conditions and union busting.'],
+    ['Ragskulla','II','Strong','The Fringe','A fringe faction introduced in Deep Cuts.']
+  ];
 
   const existing=new Set(factions.map(f=>f.name));
   coreAdditions.forEach(([name,tier,hold,category])=>{
@@ -44,6 +51,9 @@
       canon:`Published Core faction · ${category}. Tier ${tier}, ${hold.toLowerCase()} hold.`,
       source:'Core rulebook'
     });
+  });
+  deepCutsAdditions.forEach(([name,tier,hold,category,canon])=>{
+    if(!existing.has(name)) factions.push({name,tier,hold,category,crew:0,icon:'◇',canon,source:'Deep Cuts'});
   });
 
   const addRel=(a,b,status,why)=>{const k=relationKey(a,b); if(!baselineRels[k]) baselineRels[k]={status,why};};
@@ -59,8 +69,14 @@
 
   ['City Council','Leviathan Hunters','Ministry of Preservation'].forEach(x=>addRel('Sparkwrights',x,'friendly','Core canon: listed ally of the Sparkwrights.'));
   ['The Path of Echoes','The Reconciled','The Foundation'].forEach(x=>addRel('Sparkwrights',x,'hostile','Core canon: listed enemy of the Sparkwrights.'));
+  addRel('Sailors','Imperial Military','hostile','Deep Cuts: forced military conscription puts the Sailors in direct conflict with Imperial forces.');
+  addRel('Ironworks Labor','Bluecoats','hostile','Deep Cuts: Bluecoat union-busting puts them directly against organized labor.');
+  addRel('Ironworks Labor','City Council','hostile','Deep Cuts: the Council opposes the labor movement and its demands.');
+  addRel('Ironworks Labor','The Lampblacks','friendly','Deep Cuts lists the Lampblacks among Ironworks Labor’s allies.');
 
   const byName=Object.fromEntries(factions.map(f=>[f.name,f]));
+  const deepCutsExpanded=new Set(['The Hive','The Circle of Flame','The Silver Nails','Lord Scurlock','The Crows','The Lampblacks','The Red Sashes','The Dimmer Sisters','City Council','Ministry of Preservation','Ironhook Prison','Sparkwrights','The Foundation','Dockers','Gondoliers','Church of Ecstasy','The Forgotten Gods','The Reconciled','Skovlander Refugees','Deathlands Scavengers']);
+  deepCutsExpanded.forEach(name=>{if(byName[name])byName[name].source='Core Book + Deep Cuts';});
   if(byName['The Crows']) byName['The Crows'].canon='Tier II, weak hold. Lyssa leads after Roric’s death; Crow’s Foot begins in a volatile three-way struggle.';
   if(byName['The Lampblacks']) byName['The Lampblacks'].canon='Tier II, weak hold. One of the central powers in the starting war in Crow’s Foot.';
   if(byName['The Red Sashes']) byName['The Red Sashes'].canon='Tier II, weak hold. One of the central powers in the starting war in Crow’s Foot.';

@@ -30,3 +30,9 @@ Young witch living in Six Towers. She is the crew's only established contact so 
 Industrial-gothic Doskvol atmosphere without sacrificing usability: charcoal/blue-black surfaces, aged cream typography, restrained bronze and faction accents, readable high contrast, fog/lantern/crow motifs, and a living-city feel.
 
 The product name is **Doskvol Dashboard** regardless of the current repository spelling.
+
+## Architecture
+
+`index.html` loads the current dashboard in a deliberate order: the v3 application, canon expansion, visual layer, detailed lore, NPC gallery/portraits/functionality, and Crew HQ. Older experimental implementations have been removed so there is one live code path.
+
+Run `node scripts/validate.mjs` before publishing. It checks every referenced asset, validates each loaded JavaScript file, and confirms that the required source-layer and campaign markers remain present.
