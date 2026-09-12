@@ -10,7 +10,7 @@ A private GM companion for our **Blades in the Dark** campaign, built for fast u
 - Complications: quick prompts for success-with-a-complication results
 - Devil's Bargains: quick bargain prompts with the devil-face visual language
 - D6 Roller: one or more six-sided dice, roll history, eventual on-screen rolling animation
-- Gather Information: source-specific generator on each crew-contact card, with Limited, Standard and Great information quality
+- Gather Information: source-specific generator on each crew-contact card, with Limited, Standard and Great information quality, named people, MacGuffins, canon locations, interested factions, time pressure and complications
 - Crew: The Sneaks
 - NPCs/Contacts: campaign-specific relationship tracking
 - Session Notes: lightweight GM notes tied to factions, NPCs and locations

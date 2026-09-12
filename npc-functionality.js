@@ -101,15 +101,81 @@
     'Adelaide Phroaig':{specialty:'Noble families, estates, servants, society events, scandals and elite rivalries.',leads:["A noble household has changed its servants just before an important private gathering.","A family heirloom is being moved quietly to avoid the notice of a rival branch.","A polished engagement announcement is covering a vicious dispute over debt and inheritance."],limited:["Adelaide knows the public story and points out the detail that makes it suspicious.","She identifies the family involved, but the servants are protecting the deeper scandal."],standard:["She names the household, the event and the person whose behaviour has broken with custom.","She provides the guest list, estate routine or servant who knows where the secret is kept."],great:["She reveals the scandal beneath the arrangement and exactly which rival would pay for proof.","She supplies an invitation, personal seal or piece of etiquette that lets the crew pass as expected guests." ]},
     'Rigney':{specialty:'Tavern gossip, crews looking for work, criminal disputes, rumours and opportunities moving through the city.',leads:["A nervous regular is spending coin as though expecting to leave Doskvol tonight.","Three different drinkers have repeated the same rumour in wording too similar to be natural.","A crew celebrated a score before anyone heard that the target had been hit."],limited:["Rigney remembers who said it, but drink and fear have blurred the useful details.","The rumour is spreading fast; Rigney cannot yet tell whether it is warning or bait."],standard:["Rigney identifies the first reliable teller, the table where it began and the part everyone else has distorted.","Rigney gives a name, a habitual meeting place and the next likely moment to catch the source."],great:["Rigney reveals who planted the rumour and which listener reacted as though it were true.","Rigney has kept the original witness nearby and knows the favour that will make them talk freely." ]}
   };
+  const MACGUFFIN_FORMS={
+    'Quellyn':['spirit-bloom fungus','witch-bone needle','ash bell','dreaming root','hollow reliquary','warding thorn'],
+    'Flint':['spirit bottle','electroplasmic cage','ghost key','deathseeker feather','hollow mask','echo lens'],
+    'Stazia':['sealed ampoule','alchemical retort','powdered catalyst','blood-red tincture','mercurial syringe','black-salt vial'],
+    'Malista':['votive idol','heretical prayer book','saint-bone seal','ritual knife','funerary coin','forgotten-god tablet'],
+    'Telda':['servant ledger','brass door token','coded street map','watchman’s whistle','mourning locket','bundle of stolen letters'],
+    'Frake':['clockwork key','master lockplate','architect’s cipher','vault tumbler','silent hinge','tripwire spool'],
+    'Fitz':['leviathan-bone carving','pre-cataclysm cameo','demon-blood pearl','Iruvian puzzle box','ancestral signet','blackglass statuette'],
+    'Dowler':['deathlands survey','lightning-hook compass','ruin map','rail-jack field journal','sealed expedition case','pre-cataclysm waystone'],
+    'Laroze':['evidence ledger','Bluecoat badge','sealed arrest order','patrol roster','confiscation receipt','magistrate’s warrant'],
+    'Amancio':['blackmail folio','auction token','contract cipher','broker’s seal','marked coin','anonymous account book'],
+    'Adelaide Phroaig':['family testament','estate key','duelling pistol','ancestral portrait','invitation seal','inheritance codicil'],
+    'Rigney':['blood-stained playbill','smuggler’s tally','marked deck','tavern account book','coded drinking cup','missing courier’s satchel']
+  };
+  const MACGUFFIN_MODIFIERS=['Ashen','Blackglass','Drowned','Gilded','Hollow','Imperial','Leviathan-Bone','Pale','Silvered','Veiled','Whispering','Witch-Marked'];
+  const MACGUFFIN_EFFECTS={
+    'Quellyn':['holds a spirit’s final memory','blooms in the presence of possession','can break one binding ritual','reveals where the ghost field has been disturbed'],
+    'Flint':['contains a ghost that knows a living person’s secret','opens a hidden route through the ghost field','is proof of an illegal spirit trade','can identify whoever last handled a captured spirit'],
+    'Stazia':['is the missing reagent in a dangerous formula','can counterfeit the symptoms of death','neutralizes a rare poison','becomes violently unstable near electroplasm'],
+    'Malista':['names a forgotten god’s surviving bloodline','completes a forbidden rite','marks the bearer as chosen by an old power','contains a prayer that should have been erased'],
+    'Telda':['records who entered a guarded property unseen','connects a respectable household to the underworld','reveals an overlooked route into a target','proves that a witness was paid to lie'],
+    'Frake':['opens a celebrated lock without visible damage','contains the pattern for a noble vault','disables an alarm linked to the Bluecoats','proves who commissioned a secret entrance'],
+    'Fitz':['is worth a fortune to the right collector','is not decorative but an occult instrument','proves a famous collection contains stolen goods','is one piece of a larger pre-cataclysm device'],
+    'Dowler':['marks a safe passage beyond the lightning barrier','locates a sealed entrance into the Lost District','records a ruin omitted from official maps','points to a cache abandoned by Deathlands Scavengers'],
+    'Laroze':['proves evidence was removed by a senior Bluecoat','exposes a patrol paid by two rival factions','can redirect an official search','links a magistrate to confiscated contraband'],
+    'Amancio':['identifies the real patron behind a score','grants entry to a closed underworld auction','contains leverage over a supposedly neutral broker','proves two enemies are secretly trading'],
+    'Adelaide Phroaig':['changes the inheritance of a Brightstone estate','proves a noble marriage was arranged to bury a debt','grants access to a private society gathering','exposes the illegitimate heir to a powerful household'],
+    'Rigney':['identifies who planted a citywide rumour','contains the payment trail for a recent score','names a crew preparing to betray its employer','points to a valuable object hidden after a tavern killing']
+  };
+  const CONTACT_FACTIONS={
+    'Quellyn':['Spirit Wardens','The Dimmer Sisters','The Path of Echoes','The Reconciled'],
+    'Flint':['Spirit Wardens','The Dimmer Sisters','Gondoliers','The Reconciled'],
+    'Stazia':['The Hive','Sparkwrights','The Silver Nails','Leviathan Hunters'],
+    'Malista':['The Forgotten Gods','Church of Ecstasy','The Circle of Flame','The Path of Echoes'],
+    'Telda':['Bluecoats','Servants','Cabbies','The Unseen'],
+    'Frake':['The Wraiths','The Hive','Inspectors','The Foundation'],
+    'Fitz':['The Circle of Flame','The Wraiths','The Hive','Lord Scurlock'],
+    'Dowler':['Deathlands Scavengers','Rail Jacks','The Silver Nails','Ministry of Preservation'],
+    'Laroze':['Bluecoats','Inspectors','City Council','Ironhook Prison'],
+    'Amancio':['The Hive','The Unseen','Cyphers','The Crows'],
+    'Adelaide Phroaig':['City Council','Leviathan Hunters','Rowan House','The Circle of Flame'],
+    'Rigney':['The Lampblacks','The Red Sashes','The Crows','Ink Rakes']
+  };
+  const CONTACT_ROLES={
+    'Quellyn':['frightened patient','amateur occultist','disgraced physicker','Six Towers caretaker'],
+    'Flint':['spirit trafficker','masked courier','deathlands scavenger','electroplasm dealer'],
+    'Stazia':['apothecary’s apprentice','drug den cook','Leviathan Hunter surgeon','Sparkwright researcher'],
+    'Malista':['penitent cultist','Church archivist','gravedigger','masked celebrant'],
+    'Telda':['house servant','street child','night watchman','beggar-network runner'],
+    'Frake':['journeyman locksmith','estate architect','safe-cracker','security engineer'],
+    'Fitz':['private curator','desperate fence','auction clerk','ruined antiquarian'],
+    'Dowler':['Rail Jack survivor','deathlands guide','Ministry surveyor','expedition porter'],
+    'Laroze':['Bluecoat clerk','evidence-room constable','Watch informant','dismissed inspector'],
+    'Amancio':['neutral broker','underworld accountant','Cypher courier','anonymous bidder'],
+    'Adelaide Phroaig':['noble secretary','indebted heir','dismissed valet','society widow'],
+    'Rigney':['tavern regular','wounded cutter','off-duty Bluecoat','terrified courier']
+  };
+  const GIVEN_NAMES=['Aldo','Arlyn','Branon','Carro','Clave','Corille','Drav','Edlun','Emeline','Fror','Galia','Helles','Kamelin','Lannic','Mara','Naria','Odrienne','Polonia','Ring','Salia','Tocker','Vey','Wester','Zamira'];
+  const FAMILY_NAMES=['Ankhayat','Bowmore','Clelland','Dalmore','Dunvil','Farros','Haig','Klev','Michter','Penderyn','Phroaig','Prichard','Rowan','Scapa','Skelkallan','Strangford','Vale','Veyron','Westerly','Zhao'];
+  const CANON_PLACES=['Bellweather Crematorium','Brightstone','Charterhall','Coalridge','Crow’s Foot','Doskvol Academy','Dunslough','Gaddoc Rail Station','Ironhook Prison','Nightmarket','Silkshore','Six Towers','The Docks','the Lost District','Whitecrown'];
+  const STAKES=['before the next electro-rail leaves the city','before the Spirit Wardens seal the scene','before a private auction at midnight','before the owner moves it behind stronger security','before a rival crew follows the same trail','before the next bell at Bellweather Crematorium','before the evidence enters Ironhook records','before the faction’s clock advances'];
+  const COMPLICATIONS=['The named witness has already promised the same information to someone else.','The item is genuine, but a convincing duplicate is also in circulation.','Taking it will expose an innocent person who unknowingly protects it.','The current holder wants a favour rather than coin.','The obvious route is being watched by a second faction.','The MacGuffin has an occult side effect its owner does not understand.','A Bluecoat raid is scheduled for the same night.','Someone close to the contact has a private stake in keeping it hidden.'];
   function rumoursFor(name,group){const custom=(db.overrides[name]&&db.overrides[name].rumours)||[];return custom.length?custom:(R[group]||["Someone nearby knows more than they are admitting.","A small favour could expose a much larger opportunity.","Two factions are interested in the same thing for very different reasons."]);}
   function activityFor(name){return db.overrides[name]?.activity||CURRENT[name]||'They are pursuing a private objective connected to their role and watching for useful leverage.';}
   function randomRumour(name,group){const a=rumoursFor(name,group);return a[Math.floor(Math.random()*a.length)];}
   const pick=a=>a[Math.floor(Math.random()*a.length)];
   function isCrewContact(name){return CONTACT_INTEL[name]||window.DOSKVAL_NPCS?.some(p=>p.name===name&&p.kind==='contact');}
+  function generatedPerson(name){return `${pick(GIVEN_NAMES)} ${pick(FAMILY_NAMES)}, ${pick(CONTACT_ROLES[name]||['well-connected informant'])}`;}
   function gatherFrom(name,group,quality){
     const p=CONTACT_INTEL[name]||{specialty:'Local knowledge, useful connections and rumours.',leads:rumoursFor(name,group),limited:["The lead is useful but incomplete; another source must confirm the crucial detail."],standard:["The source confirms the important detail and points to a clear next step."],great:["The source also reveals hidden leverage and a safer way to act on the information."]};
-    return `${pick(p.leads)} ${pick(p[quality]||p.standard)}`;
+    const form=pick(MACGUFFIN_FORMS[name]||['sealed ledger','strange relic','missing key']),macguffin=`the ${pick(MACGUFFIN_MODIFIERS)} ${form}`,effect=pick(MACGUFFIN_EFFECTS[name]||['connects two factions that should not be working together']),person=generatedPerson(name),place=pick(CANON_PLACES),faction=pick(CONTACT_FACTIONS[name]||['Bluecoats','The Hive','Spirit Wardens']),deadline=pick(STAKES),twist=pick(COMPLICATIONS),lead=pick(p.leads);
+    const detail=quality==='limited'?pick(p.limited):quality==='great'?`${pick(p.great)} ${twist}`:pick(p.standard);
+    return {quality,lead,person,macguffin,effect,place,faction,deadline,detail,canon:[place,faction],invented:[person,macguffin]};
   }
+  function intelHTML(d){return `<b>${E(d.quality.toUpperCase())} INFORMATION</b><p class="intelLead">${E(d.lead)}</p><dl class="intelDossier"><div><dt>PERSON</dt><dd>${E(d.person)}</dd></div><div><dt>MACGUFFIN</dt><dd>${E(d.macguffin)} — ${E(d.effect)}</dd></div><div><dt>WHERE</dt><dd>${E(d.place)}</dd></div><div><dt>INTERESTED FACTION</dt><dd>${E(d.faction)}</dd></div><div><dt>TIME PRESSURE</dt><dd>${E(d.deadline)}</dd></div><div><dt>${d.quality==='great'?'LEVERAGE / TWIST':'WHAT THE CONTACT ADDS'}</dt><dd>${E(d.detail)}</dd></div></dl><small class="intelSource"><b>CANON ANCHORS:</b> ${E(d.canon.join(' · '))}<br><b>GENERATED FOR PLAY:</b> ${E(d.invented.join(' · '))}</small>`;}
 
   function cellRect(n){const z=n-1,c=z%10,r=Math.floor(z/10),pad=4;return {x0:X[c]+pad,x1:X[c+1]-pad,y0:Y[r]+pad,y1:Y[r+1]-pad};}
   function paintPortrait(el,n){const q=cellRect(n||1),rect=el.getBoundingClientRect(),bw=Math.max(1,rect.width),bh=Math.max(1,rect.height),cw=q.x1-q.x0,ch=q.y1-q.y0,s=Math.max(bw/cw,bh/ch),sw=IMG_W*s,sh=IMG_H*s,left=-(q.x0*s)+(bw-cw*s)/2,top=-(q.y0*s)+(bh-ch*s)/2;Object.assign(el.style,{backgroundImage:`url(${SPRITE})`,backgroundSize:`${sw}px ${sh}px`,backgroundPosition:`${left}px ${top}px`,backgroundRepeat:'no-repeat'});}
@@ -130,7 +196,7 @@
       ?`<h3>GATHER INFORMATION</h3><div class="npcLoreCard npcActivityCard"><label>WHAT THEY'RE DOING</label><p>${E(activityFor(name))}</p></div><div class="contactIntel"><label>WHAT ${E(name.toUpperCase())} KNOWS</label><p>${E(profile?.specialty||'Local knowledge, useful connections and rumours.')}</p><fieldset class="intelQuality" aria-label="Information quality"><legend>RESULT QUALITY</legend><label><input type="radio" name="intelQuality" value="limited"> Limited</label><label><input type="radio" name="intelQuality" value="standard" checked> Standard</label><label><input type="radio" name="intelQuality" value="great"> Great</label></fieldset><button class="gatherIntel">ASK ${E(name.toUpperCase())}</button><div class="intelResult" aria-live="polite"><span>Choose the result quality, then ask what the contact knows.</span></div></div><div class="npcLoreActions"><button class="editThisNpc">EDIT NPC</button></div>`
       :`<h3>AT THE TABLE</h3><div class="npcLoreGrid"><div class="npcLoreCard"><label>WHAT THEY'RE DOING</label><p>${E(activityFor(name))}</p></div><div class="npcLoreCard"><label>RUMOUR / LEAD</label><p class="npcRumourText">${E(rum)}</p></div></div><div class="npcLoreActions"><button class="rerollRumour">NEW RUMOUR</button><button class="editThisNpc">EDIT NPC</button></div>`;
     box.querySelector('.rerollRumour')?.addEventListener('click',()=>{box.querySelector('.npcRumourText').textContent=randomRumour(name,ov?.group||group)});
-    box.querySelector('.gatherIntel')?.addEventListener('click',()=>{const quality=box.querySelector('input[name="intelQuality"]:checked')?.value||'standard',result=box.querySelector('.intelResult');result.innerHTML=`<b>${E(quality.toUpperCase())} INFORMATION</b><p>${E(gatherFrom(name,ov?.group||group,quality))}</p>`;});
+    box.querySelector('.gatherIntel')?.addEventListener('click',()=>{const quality=box.querySelector('input[name="intelQuality"]:checked')?.value||'standard',result=box.querySelector('.intelResult');result.innerHTML=intelHTML(gatherFrom(name,ov?.group||group,quality));});
     box.querySelector('.editThisNpc').onclick=()=>openWorkshop(name);
     if(ov?.portrait){const hero=detail.querySelector('.npcHeroPortrait .realNpcSprite');if(hero)requestAnimationFrame(()=>paintPortrait(hero,ov.portrait));}
   }
