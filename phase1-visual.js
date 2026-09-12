@@ -1,12 +1,43 @@
 // Phase 1 — map + aesthetics only. Intentionally contains no audio.
 (function(){
+  const lamp = '<svg viewBox="0 0 32 64" aria-hidden="true"><path d="M16 1v7M8 12l8-5 8 5M7 17h18l-3 31H10zM9 51h14M16 52v10" fill="none" stroke="currentColor" stroke-width="2"/><path class="gas-flame" d="M16 21c-1 7-6 10-5 16 0 8 11 8 10 0-1-5-4-9-5-16z"/><path d="M7 17l3-5h12l3 5M12 18l1 30M20 18l-1 30" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
   function addAtmosphere(){
-    if(document.querySelector('.p1-gaslights')) return;
-    const lights=document.createElement('div');
-    lights.className='p1-gaslights';
-    lights.setAttribute('aria-hidden','true');
-    lights.innerHTML='<i></i><i></i><i></i>';
-    document.body.appendChild(lights);
+    const mast = document.querySelector('.masthead');
+    if (!mast || mast.querySelector('.city-weather')) return;
+    document.querySelector('.p1-gaslights')?.remove();
+    const weather = document.createElement('div');
+    weather.className = 'city-weather';
+    weather.setAttribute('aria-hidden','true');
+    weather.innerHTML = '<div class="cloud-bank cloud-far"></div><div class="cloud-bank cloud-near"></div><div class="harbour-fog"></div><div class="sky-gaslight gaslight">'+lamp+'</div><div class="sky-gaslight gaslight">'+lamp+'</div>';
+    mast.prepend(weather);
+    const pause = document.createElement('button');
+    pause.className = 'weather-toggle';
+    let paused = false;
+    try { paused = localStorage.getItem('doskval-weather-paused') === 'true'; } catch (_) {}
+    function sync(){
+      document.documentElement.dataset.weatherPaused = String(paused);
+      pause.textContent = paused ? 'Resume motion' : 'Pause motion';
+      pause.setAttribute('aria-pressed',String(paused));
+      pause.setAttribute('aria-label',paused ? 'Resume decorative city animation' : 'Pause decorative city animation');
+    }
+    pause.addEventListener('click',()=>{paused=!paused;sync();try{localStorage.setItem('doskval-weather-paused',String(paused));}catch(_) {}});
+    sync();mast.appendChild(pause);
+    document.addEventListener('visibilitychange',()=>{
+      document.documentElement.dataset.weatherHidden = String(document.hidden);
+    });
+  }
+  function decoratePanels(){
+    const kinds=[['.crewhero','crew'],['.developments','developments'],['.webstage','web'],['.clocklist','clocks'],['.checklist','session'],['.quickoracle','oracle'],['.scorequick','score'],['.facequick','contacts'],['.minimap','city']];
+    document.querySelectorAll('.dashboard-grid > .panel').forEach((panel,index)=>{
+      if(panel.dataset.deskKind) return;
+      const match=kinds.find(([selector])=>panel.querySelector(selector));
+      if(!match) return;
+      panel.dataset.deskKind=match[1];
+      const light=document.createElement('span');
+      light.className='panel-gaslight gaslight';light.setAttribute('aria-hidden','true');
+      light.style.setProperty('--lamp-delay',(-index*1.37)+'s');
+      light.innerHTML=lamp;panel.appendChild(light);
+    });
   }
 
   function refineMap(){
@@ -45,10 +76,11 @@
 
   addAtmosphere();
   refineMap();
+  decoratePanels();
 
   const main=document.getElementById('main');
   if(main){
-    new MutationObserver(()=>refineMap()).observe(main,{childList:true,subtree:true});
+    new MutationObserver(()=>{refineMap();decoratePanels();}).observe(main,{childList:true,subtree:true});
     main.addEventListener('click',()=>requestAnimationFrame(refineMap));
   }
 })();
