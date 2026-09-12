@@ -4,7 +4,7 @@ A private GM companion for our **Blades in the Dark** campaign, built for fast u
 
 ## First build
 
-- Factions: illustrated faction seals, searchable intelligence ledger, campaign/whole-city relationship web, focus mode, editable standing, relationships and clocks
+- Factions: illustrated faction seals, searchable intelligence ledger, campaign/whole-city relationship web, focus mode, editable standing, relationships and clocks, plus autosaving notes for every faction
 - Locations: Doskvol map workspace with campaign locations and future faction overlays
 - Clocks: 4/6/8 segment progress clocks
 - Complications: quick prompts for success-with-a-complication results
