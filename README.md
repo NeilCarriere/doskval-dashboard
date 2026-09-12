@@ -4,7 +4,7 @@ A private GM companion for our **Blades in the Dark** campaign, built for fast u
 
 ## First build
 
-- Factions: searchable/scrollable faction workspace, relationships, notes, clocks
+- Factions: illustrated faction seals, searchable intelligence ledger, campaign/whole-city relationship web, focus mode, editable standing, relationships and clocks
 - Locations: Doskvol map workspace with campaign locations and future faction overlays
 - Clocks: 4/6/8 segment progress clocks
 - Complications: quick prompts for success-with-a-complication results
@@ -34,5 +34,7 @@ The product name is **Doskvol Dashboard** regardless of the current repository s
 ## Architecture
 
 `index.html` loads the current dashboard in a deliberate order: the v3 application, canon expansion, visual layer, detailed lore, NPC gallery/portraits/functionality, and Crew HQ. Older experimental implementations have been removed so there is one live code path.
+
+Faction seals use selected Font Awesome Free icons under CC BY 4.0; the bundled attribution and licence are in `assets/fontawesome-LICENSE.txt`.
 
 Run `node scripts/validate.mjs` before publishing. It checks every referenced asset, validates each loaded JavaScript file, and confirms that the required source-layer and campaign markers remain present.
