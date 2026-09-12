@@ -1,4 +1,4 @@
-// Doskval NPC portraits v11 — exact pixel crop from 100-face sheet; prevents adjacent-cell bleed.
+// Doskval NPC portraits v12 — exact pixel crop from 100-face sheet; prevents adjacent-cell bleed.
 (function(){
   const SPRITE='assets/F7096ECF-A363-4258-98AA-5C2DD3364C38.png?v=curated100f';
   const IMG_W=1312, IMG_H=1199;
@@ -7,7 +7,7 @@
   const CELL={
     'Quellyn':86,'Flint':88,'Stazia':59,'Malista':69,'Telda':16,'Frake':93,'Fitz':2,
     'Dowler':25,'Laroze':34,'Amancio':9,'Adelaide Phroaig':21,'Rigney':52,
-    'Lyssa':17,'Roric':12,'Bell':39,'Bazso Baz':22,'Pickett':5,'Henner':14,
+    'Lyssa':17,'Roric':12,'Ragged Tom':58,'Bell':39,'Bazso Baz':22,'Pickett':5,'Henner':14,
     'Mylera Klev':24,'Slate':60,'Loop':20,'Nessa':42,'Hutch':54,'Hutton':68,
     'Sercy':67,'Derret':41,'Roslyn':65,'Irelen':51,'Eisele':98,'Griggs':61,
     'Margette Vale':29,'Bear':90,'Goldie':80,'Lord Scurlock':4,'Scurlock':4,
@@ -50,6 +50,16 @@
   }
   function selected(){return document.querySelector('.npcTile.selected')?.dataset?.npc||document.querySelector('.npcDetail h2')?.textContent?.trim()||''}
   function apply(){
+    // Home cards share the gallery's portrait map and exact crop calculation.
+    document.querySelectorAll('.facequick button').forEach(card=>{
+      const name=card.querySelector('b')?.textContent?.trim();
+      const box=card.querySelector('.miniavatar');
+      if(!name||!box)return;
+      box.style.position='relative';box.style.overflow='hidden';
+      box.dataset.portraitDone='1'; // Prevent the legacy SVG painter from reclaiming it.
+      if(box.querySelector('.realNpcSprite')?.dataset.portraitName===name)return;
+      box.replaceChildren(make(name,false));
+    });
     document.querySelectorAll('.npcTilePortrait').forEach(box=>{box.style.position='relative';box.style.overflow='hidden';});
     document.querySelectorAll('.npcTile').forEach(tile=>{
       const name=tile.dataset.npc||tile.querySelector('.npcTileText b')?.textContent?.trim(),box=tile.querySelector('.npcTilePortrait');
