@@ -1,21 +1,3 @@
-/* Phase 2 — Atmosphere and full Gather Information contact desk. */
-(function(){
-  const safe=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const scenes={
-    street:{name:'Rain on the Narrow Streets',desc:'Cold rain, a distant bell, and the low breath of the city.',mix:{rain:62,steam:26,bell:15,room:12}},
-    haunt:{name:'Six Towers Haunt',desc:'A quieter street: damp air, old pipes, and a haunted city keeping its distance.',mix:{rain:32,steam:18,bell:8,room:42}},
-    score:{name:'Score Underway',desc:'Tight nerves: rain, pressure, and a far-off alarm bell—not a modern siren.',mix:{rain:38,steam:37,bell:28,room:18}},
-    tavern:{name:'The Back Room',desc:'Muted fire, low conversation texture, and rain against the shutters.',mix:{rain:22,steam:8,bell:0,room:65}}
-  };
-  const stored=JSON.parse(localStorage.getItem('doskval-atmosphere')||'{}');
-  let config={scene:stored.scene||'street',playing:false,mix:Object.assign({rain:55,steam:24,bell:14,room:20},stored.mix||{})};
-  let ctx=null,nodes=[],timers=[],noise={};
-  function persist(){localStorage.setItem('doskval-atmosphere',JSON.stringify({scene:config.scene,mix:config.mix}));}
-  /* Several coloured, moving layers read as weather and machinery—not a white-noise bed. */
-  function noiseBuffer(kind='pink'){
-    if(noise[kind])return noise[kind];
-    const b=ctx.createBuffer(1,ctx.sampleRate*3,ctx.sampleRate),d=b.getChannelData(0);let last=0;
-    for(let i=0;i<d.length;i++){const w=Math.random()*2-1;last=kind==='brown'?(last+.035*w)/1.035:last*.985+w*.12;d[i]=kind==='blue'?w-last*.55:last;}
 /* Phase 2 — a varied, table-safe Doskvol soundscape and full Gather Information contact desk. */
 (function(){
   const safe=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -640,44 +622,5 @@
   if(!nav.some(item=>item[0]==='atmosphere'))nav.splice(nav.findIndex(item=>item[0]==='gather'),0,['atmosphere','♨','Atmosphere','Set the Mood']);
   window.render=renderCurrent;
   renderCurrent();
-  window.addEventListener('beforeunload',stop);
-})();
-    return noise[kind]=b;
-  }
-  function gain(v){const g=ctx.createGain();g.gain.value=v;g.connect(ctx.destination);nodes.push(g);return g;}
-  function filteredLoop(kind,amount,{high=0,low=18000,rate=1,q=0}={}){const src=ctx.createBufferSource(),hi=ctx.createBiquadFilter(),lo=ctx.createBiquadFilter(),g=gain(amount);src.buffer=noiseBuffer(kind);src.loop=true;src.playbackRate.value=rate;hi.type='highpass';hi.frequency.value=high;lo.type='lowpass';lo.frequency.value=low;lo.Q.value=q;src.connect(hi);hi.connect(lo);lo.connect(g);src.start();nodes.push(src);return g;}
-  function modulate(target,min,max,seconds){const lfo=ctx.createOscillator(),lg=ctx.createGain();lfo.type='sine';lfo.frequency.value=1/seconds;lg.gain.value=(max-min)/2;lfo.connect(lg);lg.connect(target.gain);target.gain.setValueAtTime((min+max)/2,ctx.currentTime);lfo.start();nodes.push(lfo,lg);}
-  function shortNoise(kind,amount,high,low,duration){const src=ctx.createBufferSource(),hi=ctx.createBiquadFilter(),lo=ctx.createBiquadFilter(),g=gain(0);src.buffer=noiseBuffer(kind);hi.type='highpass';hi.frequency.value=high;lo.type='lowpass';lo.frequency.value=low;src.connect(hi);hi.connect(lo);lo.connect(g);const t=ctx.currentTime;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(amount,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+duration);src.start(t);src.stop(t+duration+.02);nodes.push(src);}
-  function repeat(fn,min,max){const tick=()=>{if(!config.playing)return;fn();timers.push(setTimeout(tick,min+Math.random()*(max-min)));};timers.push(setTimeout(tick,min+Math.random()*(max-min)));}
-  function rain(){const level=(config.mix.rain||0)/100;const fine=filteredLoop('pink',level*.055,{high:950,low:6200,rate:.72}),roof=filteredLoop('brown',level*.022,{high:240,low:1800,rate:.48});modulate(fine.gain,level*.032,level*.068,7.5);modulate(roof.gain,level*.009,level*.028,11);repeat(()=>shortNoise('blue',level*(.012+Math.random()*.026),1700+Math.random()*1500,5000+Math.random()*3000,.025+Math.random()*.10),45,170);}
-  function steam(){const level=(config.mix.steam||0)/100;const hiss=filteredLoop('pink',level*.03,{high:160,low:1250,rate:.35,q:1.6});modulate(hiss.gain,level*.009,level*.04,5.2);const hum=ctx.createOscillator(),g=gain(level*.016);hum.type='sine';hum.frequency.value=42;hum.detune.value=-7;hum.connect(g);hum.start();nodes.push(hum);repeat(()=>shortNoise('brown',level*.045,70,760,.13+Math.random()*.32),1800,4600);}
-  function bell(){if(!ctx||!config.playing||!config.mix.bell)return;const t=ctx.currentTime,level=(config.mix.bell||0)/100;[1,2.01,2.68,3.78].forEach((ratio,i)=>{const o=ctx.createOscillator(),g=gain(0);o.type=i?'sine':'triangle';o.frequency.value=(188+Math.random()*5)*ratio;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(level*(i?0.011:0.022),t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+2.2+i*.42);o.connect(g);o.start(t);o.stop(t+4);nodes.push(o);});}
-  function room(){const level=(config.mix.room||0)/100;if(!level)return;const hearth=filteredLoop('brown',level*.014,{high:80,low:560,rate:.55});modulate(hearth.gain,level*.006,level*.021,9);repeat(()=>shortNoise('blue',level*.032,700,3100,.012+Math.random()*.055),280,1050);repeat(()=>{const o=ctx.createOscillator(),g=gain(0),t=ctx.currentTime;o.type='triangle';o.frequency.value=82+Math.random()*80;g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(level*.009,t+.12);g.gain.exponentialRampToValueAtTime(.0001,t+.55+Math.random()*.6);o.connect(g);o.start(t);o.stop(t+1.4);nodes.push(o);},1600,5000);}
-  function stop(){config.playing=false;timers.forEach(t=>{clearInterval(t);clearTimeout(t)});timers=[];nodes.forEach(n=>{try{n.stop&&n.stop();n.disconnect&&n.disconnect();}catch(_){}});nodes=[];}
-  async function start(){stop();ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();await ctx.resume();config.playing=true;rain();steam();room();bell();repeat(bell,16000,29000);}
-  function setScene(id){config.scene=id;config.mix=Object.assign({},scenes[id].mix);persist();if(config.playing)start();renderCurrent();}
-  function controls(){return Object.entries({rain:'Rain',steam:'Steam & machinery',bell:'Distant bells',room:'Interior texture'}).map(([key,label])=>`<div class="mixControl"><label>${label}<output id="out-${key}">${config.mix[key]}%</output></label><input data-mix="${key}" type="range" min="0" max="100" value="${config.mix[key]}"></div>`).join('');}
-  function atmospherePage(){return `<div class="pagehead"><div><p>DOSKVAL · TABLE ATMOSPHERE</p><h2>Atmosphere</h2><span>Period-appropriate sound for the city outside the score.</span></div><b>♨ ✦ ♨</b></div><div class="atmoDeck"><section class="panel atmoHero"><h3>THE CITY BREATHES</h3><p>Start a restrained live soundscape from this device. It is built from synthesized rain, steam, bells, and room tone—no modern traffic, sirens, aircraft, or contemporary machinery.</p><div class="atmoState ${config.playing?'playing':''}"><i></i><span>${config.playing?'SOUND RUNNING · tap Stop when the table starts':'SOUND STANDBY · audio begins only after you tap Start'}</span></div><div class="atmoActions"><button id="atmoToggle" class="primary">${config.playing?'STOP ATMOSPHERE':'START ATMOSPHERE'}</button><button id="atmoCue">PLAY A DISTANT BELL</button></div><div class="sceneGrid">${Object.entries(scenes).map(([id,s])=>`<button class="sceneCard ${config.scene===id?'active':''}" data-scene="${id}"><b>${safe(s.name)}</b><small>${safe(s.desc)}</small></button>`).join('')}</div><div class="atmoRule"><b>LOCKED SOUND RULE</b> Old city ambience only. Early motorcars and a rare bulb-horn “honk honk” may be introduced later, but modern engines, traffic beds, sirens, and airplanes stay out.</div></section><aside class="atmoMix"><section class="panel"><header><span>⚙</span><h2>MIX DESK</h2></header>${controls()}</section><section class="panel atmoCue"><h3>GM CUE</h3><p class="cueText" id="atmoCueText">${safe(scenes[config.scene].desc)}</p><p class="hint">Sound stays local to this dashboard and never starts on its own.</p></section></aside></div>`;}
-  function contactData(){return window.DOSKVAL_LORE?.contacts||[];}
-  function gatherPage(){const contacts=contactData();return `<div class="pagehead"><div><p>DOSKVAL · INFORMATION NETWORK</p><h2>Gather Information</h2><span>Choose the person who can actually move the investigation forward.</span></div><b>◉ ✦ ◉</b></div><section class="panel atmoContactIntro"><h3>THE SNEAKS’ CONTACTS</h3><p>All character and Shadows crew contacts are here—not just Quellyn. Tap one to set the kind of information they can provide, then choose the quality of the result.</p><div class="contactFilter"><button class="active" data-contact-filter="all">ALL CONTACTS · ${contacts.length}</button><button data-contact-filter="friend">FRIENDS</button><button data-contact-filter="rival">RIVALS</button><button data-contact-filter="crew">CREW CONTACTS</button></div><div class="gatherContactGrid" id="gatherContactGrid">${contacts.map(c=>`<button class="gatherContact" data-contact="${safe(c.name)}" data-kind="${/crew/i.test(c.group)?'crew':c.status.toLowerCase()}"><span class="contactTag">${safe(c.group)}</span><span class="status">${safe(c.status)}</span><h3>${safe(c.name)}</h3><b>${safe(c.role)}</b><p>${safe(c.sentence)}</p></button>`).join('')}</div></section><section class="panel gatherDetail" id="gatherDetail" hidden></section><section class="panel"><h3>QUESTIONS THAT MOVE PLAY</h3><p>What is really going on here? · What should I be worried about? · Where is the weakness? · Who benefits if this goes wrong? · What opportunity is everyone overlooking?</p></section>`;}
-  function gatherResult(name,quality){const d={limited:'The lead is true, but the crucial detail needs another source.',standard:'They provide a usable lead and a clear next step.',great:'They expose hidden leverage as well as the lead.'}[quality];return `<b>${quality.toUpperCase()} INFORMATION</b><p><strong>${safe(name)}</strong> says: ${safe(d)}</p><p class="hint">Use the NPC / Faces panel for that contact’s detailed activity, rumours, and generated dossier.</p>`;}
-  function bindGather(){
-    const grid=document.getElementById('gatherContactGrid');if(!grid)return;const contacts=contactData();
-    document.querySelectorAll('[data-contact-filter]').forEach(b=>b.onclick=()=>{
-      document.querySelectorAll('[data-contact-filter]').forEach(x=>x.classList.toggle('active',x===b));
-      const f=b.dataset.contactFilter;
-      grid.querySelectorAll('.gatherContact').forEach(c=>{c.hidden=!(f==='all'||c.dataset.kind===f);});
-    });
-    grid.querySelectorAll('.gatherContact').forEach(b=>b.onclick=()=>{
-      const c=contacts.find(x=>x.name===b.dataset.contact),d=document.getElementById('gatherDetail');d.hidden=false;
-      d.innerHTML=`<h3>ASK ${safe(c.name.toUpperCase())}</h3><p><b>${safe(c.role)}</b> · ${safe(c.group)}</p><p>${safe(c.sentence)}</p><fieldset><legend>RESULT QUALITY</legend><label><input type="radio" name="gq" value="limited"> Limited</label><label><input type="radio" name="gq" value="standard" checked> Standard</label><label><input type="radio" name="gq" value="great"> Great</label></fieldset><button id="askContact" class="primary">GATHER INFORMATION</button><div id="gatherAnswer" class="intelResult"><span>Choose a result quality and ask the question.</span></div>`;
-      d.querySelector('#askContact').onclick=()=>d.querySelector('#gatherAnswer').innerHTML=gatherResult(c.name,d.querySelector('input[name="gq"]:checked').value);
-      d.scrollIntoView({behavior:'smooth',block:'nearest'});
-    });
-  }
-  function bindAtmo(){document.getElementById('atmoToggle')?.addEventListener('click',async()=>{if(config.playing)stop();else await start();renderCurrent();});document.getElementById('atmoCue')?.addEventListener('click',bell);document.querySelectorAll('[data-scene]').forEach(b=>b.onclick=()=>setScene(b.dataset.scene));document.querySelectorAll('[data-mix]').forEach(i=>i.oninput=()=>{config.mix[i.dataset.mix]=+i.value;document.getElementById('out-'+i.dataset.mix).textContent=i.value+'%';persist();if(config.playing)start();});}
-  const baseRender=window.render; function renderCurrent(){baseRender();if(state.page==='atmosphere'){$('#main').innerHTML=atmospherePage();bindAtmo();}if(state.page==='gather'){$('#main').innerHTML=gatherPage();bindGather();}}
-  if(!nav.some(x=>x[0]==='atmosphere'))nav.splice(nav.findIndex(x=>x[0]==='gather'),0,['atmosphere','♨','Atmosphere','Set the Mood']);
-  window.render=renderCurrent;renderCurrent();
   window.addEventListener('beforeunload',stop);
 })();
