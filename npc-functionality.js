@@ -177,11 +177,35 @@
   }
   function intelHTML(d){return `<b>${E(d.quality.toUpperCase())} INFORMATION</b><p class="intelLead">${E(d.lead)}</p><dl class="intelDossier"><div><dt>PERSON</dt><dd>${E(d.person)}</dd></div><div><dt>MACGUFFIN</dt><dd>${E(d.macguffin)} — ${E(d.effect)}</dd></div><div><dt>WHERE</dt><dd>${E(d.place)}</dd></div><div><dt>INTERESTED FACTION</dt><dd>${E(d.faction)}</dd></div><div><dt>TIME PRESSURE</dt><dd>${E(d.deadline)}</dd></div><div><dt>${d.quality==='great'?'LEVERAGE / TWIST':'WHAT THE CONTACT ADDS'}</dt><dd>${E(d.detail)}</dd></div></dl><small class="intelSource"><b>CANON ANCHORS:</b> ${E(d.canon.join(' · '))}<br><b>GENERATED FOR PLAY:</b> ${E(d.invented.join(' · '))}</small>`;}
 
-  function cellRect(n){const safe=Math.min(100,Math.max(1,Number(n)||1)),z=safe-1,c=z%10,r=Math.floor(z/10),pad=7;return {x0:X[c]+pad,x1:X[c+1]-pad,y0:Y[r]+pad,y1:Y[r+1]-pad};}
+  const safePortrait=n=>Math.min(100,Math.max(1,Number(n)||1));
+  function cellRect(n){const safe=safePortrait(n),z=safe-1,c=z%10,r=Math.floor(z/10),pad=7;return {x0:X[c]+pad,x1:X[c+1]-pad,y0:Y[r]+pad,y1:Y[r+1]-pad};}
   function paintPortrait(el,n){const safe=Math.min(100,Math.max(1,Number(n)||1)),q=cellRect(safe),rect=el.getBoundingClientRect(),bw=Math.max(1,rect.width),bh=Math.max(1,rect.height),cw=q.x1-q.x0,ch=q.y1-q.y0,s=Math.max(bw/cw,bh/ch),sw=IMG_W*s,sh=IMG_H*s,left=-(q.x0*s)+(bw-cw*s)/2,top=-(q.y0*s)+(bh-ch*s)/2;let img=el.querySelector(':scope > img');if(!img){img=document.createElement('img');img.alt='';img.decoding='async';img.draggable=false;el.replaceChildren(img);}img.src=SPRITE;Object.assign(el.style,{overflow:'hidden',backgroundImage:'none',backgroundSize:'auto',backgroundPosition:'0 0',backgroundRepeat:'no-repeat'});Object.assign(img.style,{position:'absolute',width:`${sw}px`,height:`${sh}px`,maxWidth:'none',maxHeight:'none',left:`${left}px`,top:`${top}px`});}
   function portraitNode(n,cls=''){const d=document.createElement('i');d.className=`workshopPortrait ${cls}`.trim();d.dataset.workshopPortrait=String(Math.min(100,Math.max(1,Number(n)||1)));requestAnimationFrame(()=>paintPortrait(d,n));return d;}
   function mountWorkshopPortrait(host,n,hero=false){if(!host)return null;const safe=Math.min(100,Math.max(1,Number(n)||1)),current=host.querySelector(':scope > .workshopPortrait');if(current?.dataset.workshopPortrait===String(safe)){requestAnimationFrame(()=>paintPortrait(current,safe));return current;}const portrait=portraitNode(safe,hero?'workshopHeroPortrait':'');host.replaceChildren(portrait);host.dataset.workshopPortrait=String(safe);if(hero){const label=document.createElement('span');label.className='vizLabel';label.textContent='CAMPAIGN VISUALIZATION';host.appendChild(label);}return portrait;}
   function repaintWorkshopPortraits(){document.querySelectorAll('.workshopPortrait').forEach(el=>paintPortrait(el,el.dataset.workshopPortrait));}
+  const pickerSheet=new Image();
+  pickerSheet.decoding='async';
+  pickerSheet.src=SPRITE;
+  function paintPickerCanvas(canvas,n){
+    const rect=canvas.getBoundingClientRect(),bw=Math.round(rect.width),bh=Math.round(rect.height);
+    if(!bw||!bh||!pickerSheet.complete||!pickerSheet.naturalWidth)return;
+    const dpr=Math.min(2,window.devicePixelRatio||1),pw=Math.round(bw*dpr),ph=Math.round(bh*dpr);
+    if(canvas.width!==pw||canvas.height!==ph){canvas.width=pw;canvas.height=ph;}
+    const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)return;
+    ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,bw,bh);
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    const q=cellRect(n),cw=q.x1-q.x0,ch=q.y1-q.y0,s=Math.max(bw/cw,bh/ch),dw=cw*s,dh=ch*s;
+    ctx.drawImage(pickerSheet,q.x0,q.y0,cw,ch,(bw-dw)/2,(bh-dh)/2,dw,dh);
+  }
+  function pickerCanvasNode(n){const canvas=document.createElement('canvas');canvas.className='portraitChoiceCanvas';canvas.dataset.portraitChoice=String(safePortrait(n));canvas.setAttribute('aria-hidden','true');requestAnimationFrame(()=>paintPickerCanvas(canvas,n));return canvas;}
+  function layoutPortraitChooser(grid){
+    const choice=grid.querySelector('.portraitChoice'),size=Math.round(choice?.getBoundingClientRect().width||0);
+    if(!size)return;
+    grid.style.setProperty('--portrait-choice-size',`${size}px`);
+    requestAnimationFrame(()=>grid.querySelectorAll('.portraitChoiceCanvas').forEach(canvas=>paintPickerCanvas(canvas,canvas.dataset.portraitChoice)));
+  }
+  function repaintPortraitChoosers(){document.querySelectorAll('.portraitChooserGrid').forEach(layoutPortraitChooser);}
+  pickerSheet.addEventListener('load',()=>requestAnimationFrame(repaintPortraitChoosers),{once:true});
 
   function groupFromDetail(detail){return detail.querySelector('.npcFacts div:nth-child(4) b')?.textContent?.trim()||detail.querySelector('header small')?.textContent?.split('·').pop()?.trim()||'';}
   function enhanceDetail(){
@@ -219,7 +243,7 @@
     document.querySelector('.npcWorkshop')?.remove();const host=document.querySelector('.npcWorkspace')?.parentElement||document.querySelector('#main');if(!host)return;const old=db.overrides[name]||db.custom.find(x=>x.name===name)||getExisting(name);let portrait=old.portrait||1;
     const w=document.createElement('div');w.className='npcWorkshop';w.innerHTML=`<div class="npcWorkshopHead"><h2>${name?'Edit NPC':'Create NPC'}</h2><button class="closeWorkshop">CLOSE</button></div><div class="npcWorkshopGrid"><label>Name<input id="nwName" value="${E(old.name||'')}"></label><label>Role<input id="nwRole" value="${E(old.role||'')}"></label><label>Faction / Network<input id="nwGroup" value="${E(old.group||'')}"></label><label>Status<input id="nwStatus" value="${E(old.status||'Contact')}"></label><label class="wide">Description<textarea id="nwDesc">${E(old.desc||'')}</textarea></label><label class="wide">What are they doing right now?<textarea id="nwActivity">${E(old.activity||CURRENT[name]||'')}</textarea></label><label class="wide">Rumours / leads — one per line<textarea id="nwRumours">${E((old.rumours||[]).join('\n'))}</textarea></label><div class="portraitChooser"><label>Portrait — choose any face from the 100-face reserve</label><div class="portraitChooserGrid"></div></div><div class="npcWorkshopActions"><button type="button" class="randomNpc">GENERATE NPC</button><button class="saveNpc">SAVE NPC</button></div></div>`;
     host.prepend(w);w.scrollIntoView({behavior:'smooth',block:'start'});w.querySelector('.closeWorkshop').onclick=()=>w.remove();
-    const pg=w.querySelector('.portraitChooserGrid');for(let i=1;i<=100;i++){const b=document.createElement('button');b.type='button';b.className='portraitChoice'+(i===portrait?' active':'');b.dataset.n=i;b.innerHTML=`<span>${i}</span>`;b.appendChild(portraitNode(i));b.onclick=()=>{portrait=i;pg.querySelectorAll('.portraitChoice').forEach(x=>x.classList.toggle('active',x===b));};pg.appendChild(b);}setTimeout(()=>pg.querySelectorAll('.portraitChoice i').forEach((el,i)=>paintPortrait(el,i+1)),50);
+    const pg=w.querySelector('.portraitChooserGrid');for(let i=1;i<=100;i++){const b=document.createElement('button');b.type='button';b.className='portraitChoice'+(i===portrait?' active':'');b.dataset.n=i;b.innerHTML=`<span>${i}</span>`;b.appendChild(pickerCanvasNode(i));b.onclick=()=>{portrait=i;pg.querySelectorAll('.portraitChoice').forEach(x=>x.classList.toggle('active',x===b));};pg.appendChild(b);}requestAnimationFrame(()=>layoutPortraitChooser(pg));
     w.querySelector('.randomNpc').onclick=()=>{const rec=generateNpc(),set=(id,value)=>w.querySelector(id).value=value;set('#nwName',rec.name);set('#nwRole',rec.role);set('#nwGroup',rec.group);set('#nwStatus',rec.status);set('#nwDesc',rec.desc);set('#nwActivity',rec.activity);set('#nwRumours',rec.rumours.join('\n'));portrait=rec.portrait;pg.querySelectorAll('.portraitChoice').forEach(b=>b.classList.toggle('active',+b.dataset.n===portrait));};
     w.querySelector('.saveNpc').onclick=()=>{const val=id=>w.querySelector(id).value.trim(),nm=val('#nwName');if(!nm)return alert('Give the NPC a name first.');const rec={name:nm,role:val('#nwRole'),group:val('#nwGroup'),status:val('#nwStatus'),desc:val('#nwDesc'),activity:val('#nwActivity'),rumours:val('#nwRumours').split('\n').map(s=>s.trim()).filter(Boolean),portrait};if(name){if(name!==nm){db.custom=db.custom.filter(x=>x.name!==name);db.overrides[name]=undefined;}db.overrides[nm]=rec;}else{db.custom=db.custom.filter(x=>x.name!==nm);db.custom.push(rec);}save(db);w.remove();renderCustomTiles();setTimeout(enhanceDetail,80);};
   }
@@ -228,5 +252,5 @@
   function renderCustomTiles(){const tiles=document.querySelector('.npcTiles');if(!tiles)return;const wanted=new Set(db.custom.map(rec=>rec.name));tiles.querySelectorAll('.customNpc').forEach(tile=>{if(!wanted.has(tile.dataset.npc))tile.remove();});db.custom.forEach(rec=>{const signature=JSON.stringify([rec.name,rec.role,rec.group,rec.status,rec.desc,rec.portrait]);let b=[...tiles.querySelectorAll('.customNpc')].find(tile=>tile.dataset.npc===rec.name);if(b?.dataset.customSignature===signature)return;if(!b){b=document.createElement('button');b.className='npcTile customNpc';tiles.appendChild(b);}b.dataset.npc=rec.name;b.dataset.customSignature=signature;b.innerHTML=`<div class="npcTilePortrait"></div><div class="npcTileText"><b>${E(rec.name)} <span class="npcCustomBadge">CUSTOM</span></b><small>${E(rec.role)} · ${E(rec.group)}</small></div>`;const portraitHost=b.querySelector('.npcTilePortrait');mountWorkshopPortrait(portraitHost,rec.portrait);b.onclick=()=>{document.querySelectorAll('.npcTile').forEach(tile=>tile.classList.remove('selected'));b.classList.add('selected');showCustom(rec);};});}
 
   function apply(){addWorkshopButton();renderCustomTiles();enhanceDetail();}
-  let t;const mo=new MutationObserver(()=>{clearTimeout(t);t=setTimeout(apply,60)});mo.observe(document.documentElement,{subtree:true,childList:true});document.addEventListener('click',()=>setTimeout(apply,80),true);window.addEventListener('resize',()=>setTimeout(repaintWorkshopPortraits,50));setTimeout(apply,300);setTimeout(apply,900);
+  let t;const mo=new MutationObserver(()=>{clearTimeout(t);t=setTimeout(apply,60)});mo.observe(document.documentElement,{subtree:true,childList:true});document.addEventListener('click',()=>setTimeout(apply,80),true);window.addEventListener('resize',()=>setTimeout(()=>{repaintWorkshopPortraits();repaintPortraitChoosers();},50));setTimeout(apply,300);setTimeout(apply,900);
 })();
