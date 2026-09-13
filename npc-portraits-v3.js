@@ -62,13 +62,14 @@
     });
     document.querySelectorAll('.npcTilePortrait').forEach(box=>{box.style.position='relative';box.style.overflow='hidden';});
     document.querySelectorAll('.npcTile').forEach(tile=>{
+      if(tile.classList.contains('customNpc')||tile.querySelector('.workshopPortrait'))return;
       const name=tile.dataset.npc||tile.querySelector('.npcTileText b')?.textContent?.trim(),box=tile.querySelector('.npcTilePortrait');
       if(!name||!box)return;
       if(box.dataset.portraitV11===name)return;
       box.innerHTML='';box.appendChild(make(name,false));box.dataset.portraitV11=name;
     });
     const name=selected(),hero=document.querySelector('.npcHeroPortrait');
-    if(name&&hero){hero.style.position='relative';hero.style.overflow='hidden';
+    if(name&&hero&&!hero.dataset.workshopPortrait){hero.style.position='relative';hero.style.overflow='hidden';
       if(hero.dataset.portraitV11!==name){hero.innerHTML='';hero.appendChild(make(name,true));const lab=document.createElement('span');lab.className='vizLabel';lab.textContent='CAMPAIGN VISUALIZATION';hero.appendChild(lab);hero.dataset.portraitV11=name;}
     }
     document.querySelector('.npcWorkspace')?.classList.add('premiumWorkspace');document.querySelector('.npcGallery')?.classList.add('premiumGallery');
