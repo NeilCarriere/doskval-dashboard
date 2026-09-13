@@ -254,6 +254,11 @@
 
   function installHomePolish() {
     const panels = [...document.querySelectorAll('.dashboard-grid > .panel')];
+    const mapPanel = panels.find(panel => panel.querySelector('.minimap'));
+    const webPanel = panels.find(panel => panel.querySelector('.webstage'));
+    mapPanel?.classList.add('homeMapPrimary');
+    webPanel?.classList.add('homeWebSecondary');
+
     const sessionPanel = panels.find(panel => panel.querySelector('.checklist'));
     if (sessionPanel && !sessionPanel.querySelector('.polishNextEditor')) {
       const editor = document.createElement('form');
